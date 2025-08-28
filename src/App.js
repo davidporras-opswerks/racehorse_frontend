@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Racehorses from "./pages/Racehorses";
+import RacehorseDetail from "./pages/RacehorseDetail";
 import Jockeys from "./pages/Jockeys";
 import Races from "./pages/Races";
 import Participations from "./pages/Participations";
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/racehorses" />} />
         <Route path="/racehorses" element={user ? <Racehorses /> : <Navigate to="/login" />} />
+        <Route path="/racehorses/:id" element={<RacehorseDetail />} />
         <Route path="/jockeys" element={user ? <Jockeys /> : <Navigate to="/login" />} />
         <Route path="/races" element={user ? <Races /> : <Navigate to="/login" />} />
         <Route path="/participations" element={user ? <Participations /> : <Navigate to="/login" />} />
