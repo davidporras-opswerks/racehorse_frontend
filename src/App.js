@@ -10,6 +10,7 @@ import Races from "./pages/Races";
 import Participations from "./pages/Participations";
 import JockeyDetail from "./pages/JockeyDetail";
 import RaceDetail from "./pages/RaceDetail";
+import ParticipationDetail from "./pages/ParticipationDetail";
 
 function App() {
   const { user } = useAuth();
@@ -27,6 +28,7 @@ function App() {
         <Route path="/races" element={user ? <Races /> : <Navigate to="/login" />} />
         <Route path="/races/:id" element={<RaceDetail />} />
         <Route path="/participations" element={user ? <Participations /> : <Navigate to="/login" />} />
+        <Route path="/participations/:id" element={<ParticipationDetail />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
