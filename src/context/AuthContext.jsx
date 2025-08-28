@@ -40,6 +40,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem("refresh", data.refresh);
 
     const decoded = jwtDecode(data.access);
+    console.log(decoded)
     setUser(decoded); // store token claims (user_id, is_admin, etc.)
   };
 

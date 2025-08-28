@@ -5,6 +5,8 @@ const API_BASE = "http://127.0.0.1:8000/api";
 export async function fetchWithAuth(endpoint, options = {}) {
   let token = localStorage.getItem("access");
 
+  console.log("Sending request with Bearer token:", token);
+
   let res = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
     headers: {
