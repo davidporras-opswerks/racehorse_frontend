@@ -1,71 +1,71 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import EditRacehorseModal from "../components/EditRacehorseModal";
+import EditJockeyModal from "../components/EditJockeyModal";
 import ConfirmModal from "../components/ConfirmModal";
 
-function RacehorseDetail() {
+function JockeyDetail() {
   const { id } = useParams();
   const { fetchWithAuth } = useAuth();
-  const [horse, setHorse] = useState(null);
+  const [jockey, setJockey] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchWithAuth(`/racehorses/${id}/`)
-      .then((data) => setHorse(data))
+    fetchWithAuth(`/jockeys/${id}/`)
+      .then((data) => setJockey(data))
       .catch((err) => {
         console.error(err);
       });
   }, [id, fetchWithAuth]);
 
   const handleDelete = () => {
-    fetchWithAuth(`/racehorses/${id}/`, { method: "DELETE" })
-      .then(() => navigate("/racehorses"))
+    fetchWithAuth(`/jockeys/${id}/`, { method: "DELETE" })
+      .then(() => navigate("/jockeys"))
       .catch((err) => {
         console.error("Delete failed:", err);
         alert("Failed to delete");
       });
   };
 
-  if (!horse) return <p>Loading...</p>;
+  if (!jockey) return <p>Loading...</p>;
 
   return (
     <div>
-      <h2>{horse.name}</h2>
-      <p><strong>Breed:</strong> {horse.breed}</p>
-      <p><strong>Gender:</strong> {horse.gender}</p>
-      <p><strong>Birth Date:</strong> {horse.birth_date}</p>
-      <p><strong>Country:</strong> {horse.country}</p>
-      <p><strong>Active:</strong> {horse.is_active ? "Yes" : "No"}</p>
-      <p><strong>Total Races:</strong> {horse.total_races}</p>
-      <p><strong>Total Wins:</strong> {horse.total_wins}</p>
-      <p><strong>Win Rate:</strong> {horse.win_rate}%</p>
-      <p><strong>Age:</strong> {horse.age}</p>
+      <h2>{jockey.name}</h2>
+      <p><strong>Height:</strong> {jockey.height_cm ? `${jockey.height_cm} cm` : "N/A"}</p>
+      <p><strong>Weight:</strong> {jockey.weight_kg ? `${jockey.weight_kg} kg` : "N/A"}</p>
+      <p><strong>Birth Date:</strong> {jockey.birth_date || "N/A"}</p>
+      <p><strong>Total Races:</strong> {jockey.total_races}</p>
+      <p><strong>Total Wins:</strong> {jockey.total_wins}</p>
+      <p><strong>Win Rate:</strong> {jockey.win_rate}%</p>
+      <p><strong>Age:</strong> {jockey.age || "N/A"}</p>
 
-      {horse.image && (
+      {jockey.image && (
         <div>
-          <img src={horse.image} alt={horse.name} style={{ maxWidth: "300px" }} />
+          <img src={jockey.image} alt={jockey.name} style={{ maxWidth: "300px" }} />
         </div>
       )}
 
       <button onClick={() => navigate(-1)}>⬅ Back</button>
       <button onClick={() => setShowEdit(true)}>✏️ Edit</button>
       <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>
+
       {showEdit && (
-        <EditRacehorseModal
-          horse={horse}
+        <EditJockeyModal
+          jockey={jockey}
           onClose={() => setShowEdit(false)}
           onSuccess={(updated) => {
-            setHorse(updated);
+            setJockey(updated);
             setShowEdit(false);
           }}
         />
       )}
+
       {confirmDelete && (
         <ConfirmModal
-          message={`Are you sure you want to delete "${horse.name}"?`}
+          message={`Are you sure you want to delete "${jockey.name}"?`}
           onConfirm={handleDelete}
           onCancel={() => setConfirmDelete(false)}
         />
@@ -74,4 +74,4 @@ function RacehorseDetail() {
   );
 }
 
-export default RacehorseDetail;
+export default JockeyDetail;

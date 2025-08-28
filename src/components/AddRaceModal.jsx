@@ -1,0 +1,216 @@
+import { useState } from "react";
+import "./Modal.css"; // reuse same modal styles
+
+function AddRaceModal({ onClose, onSuccess }) {
+  const [form, setForm] = useState({
+    name: "",
+    date: "",
+    location: "",
+    track_configuration: "",
+    track_condition: "",
+    classification: "",
+    season: "",
+    track_length: "",
+    prize_money: "",
+    currency: "USD",
+    track_surface: "",
+  });
+  const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("access");
+
+    const res = await fetch("http://127.0.0.1:8000/api/races/", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    if (res.ok) {
+      const newRace = await res.json();
+      setMessage("✅ Race added!");
+      onSuccess(newRace);
+    } else {
+      const err = await res.json();
+      setMessage("❌ Error: " + JSON.stringify(err));
+    }
+  };
+
+  // backend choices
+  const trackConfigurations = [
+    { value: "left_handed", label: "Left Handed" },
+    { value: "right_handed", label: "Right Handed" },
+    { value: "straight", label: "Straight" },
+  ];
+
+  const trackSurfaces = [
+    { value: "D", label: "Dirt" },
+    { value: "T", label: "Turf" },
+    { value: "S", label: "Synthetic" },
+    { value: "O", label: "Other" },
+  ];
+
+  const trackConditions = [
+    "fast","frozen","good","heavy","muddy","sloppy","slow","wet_fast",
+    "firm","hard","soft","yielding","standard","harsh"
+  ];
+
+  const classifications = [
+    { value: "G1", label: "Grade 1" },
+    { value: "G2", label: "Grade 2" },
+    { value: "G3", label: "Grade 3" },
+    { value: "L", label: "Listed" },
+    { value: "H", label: "Handicap" },
+    { value: "M", label: "Maiden" },
+    { value: "O", label: "Other" },
+  ];
+
+  const seasons = [
+    { value: "SP", label: "Spring" },
+    { value: "SU", label: "Summer" },
+    { value: "FA", label: "Fall" },
+    { value: "WI", label: "Winter" },
+  ];
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-box">
+        <h2>Add Race</h2>
+        {message && <p>{message}</p>}
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Race Name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+          />
+
+          <select
+            name="track_configuration"
+            value={form.track_configuration}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Track Configuration --</option>
+            {trackConfigurations.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+
+          <select
+            name="track_surface"
+            value={form.track_surface}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Track Surface --</option>
+            {trackSurfaces.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+
+          <select
+            name="track_condition"
+            value={form.track_condition}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Track Condition --</option>
+            {trackConditions.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          <select
+            name="classification"
+            value={form.classification}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Classification --</option>
+            {classifications.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+
+          <select
+            name="season"
+            value={form.season}
+            onChange={handleChange}
+            required
+          >
+            <option value="">-- Season --</option>
+            {seasons.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+
+          <input
+            type="number"
+            name="track_length"
+            placeholder="Track Length (m)"
+            value={form.track_length}
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            name="prize_money"
+            placeholder="Prize Money"
+            value={form.prize_money}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="currency"
+            placeholder="Currency (e.g. USD, JPY)"
+            value={form.currency}
+            onChange={handleChange}
+          />
+
+          <div className="modal-actions">
+            <button type="submit" className="modal-button submit">
+              Add
+            </button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default AddRaceModal;
