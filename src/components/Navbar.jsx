@@ -19,6 +19,12 @@ function Navbar() {
             <Link className="navbar-link" to="/jockeys">Jockeys</Link>
             <Link className="navbar-link" to="/races">Races</Link>
             <Link className="navbar-link" to="/participations">Participations</Link>
+
+            {/* 👇 Only visible if user.is_admin is true */}
+            {user.is_admin && (
+              <Link className="navbar-link" to="/register">Register</Link>
+            )}
+
             <button className="navbar-button" onClick={logout}>Logout</button>
           </>
         ) : (

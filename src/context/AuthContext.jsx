@@ -1,17 +1,25 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithAuth } from "../api/auth";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // optional: store current user
+  const [user, setUser] = useState(null); // store decoded user info
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // On mount, check if we already have tokens
     const token = localStorage.getItem("access");
     if (token) {
-      setUser({}); // you can fetch /me if needed
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded); // this contains user_id, is_admin, exp, etc.
+      } catch (err) {
+        console.error("Invalid token in localStorage", err);
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
+      }
     }
     setLoading(false);
   }, []);
@@ -31,7 +39,8 @@ export function AuthProvider({ children }) {
     localStorage.setItem("access", data.access);
     localStorage.setItem("refresh", data.refresh);
 
-    setUser({ username }); // minimal, or fetch user profile
+    const decoded = jwtDecode(data.access);
+    setUser(decoded); // store token claims (user_id, is_admin, etc.)
   };
 
   const logout = () => {
