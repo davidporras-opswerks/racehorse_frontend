@@ -12,15 +12,15 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
     gender: horse.gender || "",
     country: horse.country || "",
     image: horse.image || null,
-    is_active: horse.is_active || false,
+    is_active: horse.is_active ?? true,
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    if (type === "checkbox") {
-      setForm({ ...form, [name]: checked });
-    } else if (type === "file") {
+    if (type === "file") {
       setForm({ ...form, image: files[0] });
+    } else if (type === "checkbox") {
+      setForm({ ...form, [name]: checked });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -31,15 +31,21 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
 
     let body;
     let headers = {};
-    if (form.image) {
-      // multipart if uploading an image
+    if (form.image instanceof File) {
+      // multipart if uploading a new image
       body = new FormData();
       for (const key in form) {
-        body.append(key, form[key]);
+        if (form[key] !== null && form[key] !== "") {
+          body.append(key, form[key]);
+        }
       }
     } else {
-      // JSON if no image
-      body = JSON.stringify(form);
+      // JSON if no new image uploaded
+      const jsonForm = { ...form };
+      // ❌ Don't send image URL back
+      delete jsonForm.image;
+      
+      body = JSON.stringify(jsonForm);
       headers["Content-Type"] = "application/json";
     }
 
@@ -68,8 +74,8 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
             required
           />
           <input
-            name="birth_date"
             type="date"
+            name="birth_date"
             value={form.birth_date}
             onChange={handleChange}
           />
@@ -79,32 +85,48 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
             value={form.breed}
             onChange={handleChange}
           />
-          <input
+          <select
             name="gender"
-            placeholder="Gender"
             value={form.gender}
             onChange={handleChange}
-          />
+            required
+          >
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Gelding">Gelding</option>
+          </select>
           <input
             name="country"
             placeholder="Country"
             value={form.country}
             onChange={handleChange}
           />
+          <input type="file" name="image" onChange={handleChange} />
+
           <label>
-            Active:
             <input
               type="checkbox"
               name="is_active"
               checked={form.is_active}
               onChange={handleChange}
             />
+            Active
           </label>
-          <input type="file" name="image" onChange={handleChange} />
+
+          {/* Read-only computed stats */}
+          <div className="racehorse-stats">
+            <p><strong>Age:</strong> {horse.age ?? "N/A"}</p>
+            <p><strong>Total Races:</strong> {horse.total_races ?? 0}</p>
+            <p><strong>Total Wins:</strong> {horse.total_wins ?? 0}</p>
+            <p><strong>Win Rate:</strong> {horse.win_rate?.toFixed(2) ?? "0.00"}%</p>
+          </div>
 
           <div className="modal-actions">
             <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>Cancel</button>
+            <button type="button" onClick={onClose}>
+              Cancel
+            </button>
           </div>
         </form>
       </div>

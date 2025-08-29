@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import AddRaceModal from "../components/AddRaceModal";
 import EditRaceModal from "../components/EditRaceModal";
 import ConfirmModal from "../components/ConfirmModal";
+import RaceFilterModal from "../components/RaceFilterModal";
+import "./Racehorses.css"; // reuse same CSS
 
 function Races() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -11,18 +13,56 @@ function Races() {
   const [showModal, setShowModal] = useState(false);
   const [editingRace, setEditingRace] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [showFilterModal, setShowFilterModal] = useState(false);
 
-  // Pagination state
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [next, setNext] = useState(null);
   const [previous, setPrevious] = useState(null);
+  const pageSize = 10;
 
-  const pageSize = 10; // Django REST default unless overridden
+  const [filters, setFilters] = useState({
+    location: "",
+    track_surface: "",
+    classification: "",
+    season: "",
+    date_after: "", // for date__gt
+    date_before: "", // for date__lt
+  });
+
+  const [search, setSearch] = useState("");
 
   const fetchPage = useCallback(
-    (pageNum) => {
-      fetchWithAuth(`/races/?page=${pageNum}`)
+    (pageNum = 1) => {
+      const params = new URLSearchParams({ page: pageNum });
+
+      // Filters
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== "") {
+          switch (key) {
+            case "date_after":
+              params.append("date__gt", value);
+              break;
+            case "date_before":
+              params.append("date__lt", value);
+              break;
+            default:
+              // partial match for text fields, exact for others
+              if (["location"].includes(key)) {
+                params.append(`${key}__icontains`, value);
+              } else {
+                params.append(key, value);
+              }
+          }
+        }
+      });
+
+      // Search by name
+      if (search.trim() !== "") {
+        params.append("search", search);
+      }
+
+      fetchWithAuth(`/races/?${params.toString()}`)
         .then((data) => {
           setItems(data.results || []);
           setCount(data.count || 0);
@@ -35,7 +75,7 @@ function Races() {
           logout();
         });
     },
-    [fetchWithAuth, logout]
+    [filters, search, fetchWithAuth, logout]
   );
 
   useEffect(() => {
@@ -57,9 +97,20 @@ function Races() {
   return (
     <div>
       <h1>Races</h1>
-      {user && (
-        <button onClick={() => setShowModal(true)}>➕ Add Race</button>
-      )}
+
+      <div className="filter-search-container">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button onClick={() => fetchPage(1)}>Search</button>
+        <button onClick={() => setShowFilterModal(true)}>⚙️ Filters</button>
+      </div>
+
+      {user && <button onClick={() => setShowModal(true)}>➕ Add Race</button>}
+
       <ul>
         {items.map((race) => (
           <li key={race.id}>
@@ -73,8 +124,8 @@ function Races() {
         ))}
       </ul>
 
-      {/* Pagination controls */}
-      <div style={{ marginTop: "1rem" }}>
+      {/* Pagination */}
+      <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
@@ -89,13 +140,10 @@ function Races() {
       {showModal && (
         <AddRaceModal
           onClose={() => setShowModal(false)}
-          onSuccess={() => {
-            // Refetch to keep pagination consistent
-            fetchPage(page);
-            setShowModal(false);
-          }}
+          onSuccess={() => fetchPage(page)}
         />
       )}
+
       {editingRace && (
         <EditRaceModal
           race={editingRace}
@@ -106,11 +154,24 @@ function Races() {
           }}
         />
       )}
+
       {confirmDelete && (
         <ConfirmModal
           message={`Are you sure you want to delete "${confirmDelete.name}"?`}
           onConfirm={() => handleDelete(confirmDelete.id)}
           onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+
+      {showFilterModal && (
+        <RaceFilterModal
+          filters={filters}
+          onChange={setFilters}
+          onApply={() => {
+            fetchPage(1);
+            setShowFilterModal(false);
+          }}
+          onClose={() => setShowFilterModal(false)}
         />
       )}
     </div>

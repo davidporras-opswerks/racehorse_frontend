@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import AddJockeyModal from "../components/AddJockeyModal";
 import EditJockeyModal from "../components/EditJockeyModal";
 import ConfirmModal from "../components/ConfirmModal";
+import "./Racehorses.css"; // reuse the same CSS for buttons, pagination, etc.
 
 function Jockeys() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -12,16 +13,24 @@ function Jockeys() {
   const [editingJockey, setEditingJockey] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
-  // Pagination state
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [next, setNext] = useState(null);
   const [previous, setPrevious] = useState(null);
+  const pageSize = 10;
 
-  const pageSize = 10; // Django default unless overridden
+  const [search, setSearch] = useState("");
 
-  const fetchPage = useCallback((pageNum) => {
-      fetchWithAuth(`/jockeys/?page=${pageNum}`)
+  const fetchPage = useCallback(
+    (pageNum = 1) => {
+      const params = new URLSearchParams({ page: pageNum });
+
+      // Search (matches JockeyFilter & SearchFilter)
+      if (search.trim() !== "") {
+        params.append("search", search);
+      }
+
+      fetchWithAuth(`/jockeys/?${params.toString()}`)
         .then((data) => {
           setItems(data.results || []);
           setCount(data.count || 0);
@@ -33,7 +42,9 @@ function Jockeys() {
           console.error(err);
           logout();
         });
-    }, [fetchWithAuth, logout]);
+    },
+    [search, fetchWithAuth, logout]
+  );
 
   useEffect(() => {
     fetchPage(1);
@@ -46,7 +57,7 @@ function Jockeys() {
         setConfirmDelete(null);
       })
       .catch((err) => {
-        console.error("Failed to delete racehorse:", err);
+        console.error("Failed to delete jockey:", err);
         alert("Delete failed");
       });
   };
@@ -54,12 +65,24 @@ function Jockeys() {
   return (
     <div>
       <h1>Jockeys</h1>
-      {user && (
-        <button onClick={() => setShowModal(true)}>➕ Add Racehorse</button>
-      )}
+
+      {/* Search input */}
+      <div className="filter-search-container">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button onClick={() => fetchPage(1)}>Search</button>
+      </div>
+
+      {user && <button onClick={() => setShowModal(true)}>➕ Add Jockey</button>}
+
       <ul>
         {items.map((jockey) => (
-          <li key={jockey.id}>{jockey.name}{" "}
+          <li key={jockey.id}>
+            {jockey.name}{" "}
             <Link to={`/jockeys/${jockey.id}`}>
               <button>View Details</button>
             </Link>
@@ -69,21 +92,15 @@ function Jockeys() {
         ))}
       </ul>
 
-      {/* Pagination controls */}
-      <div style={{ marginTop: "1rem" }}>
-        <button
-          disabled={!previous}
-          onClick={() => fetchPage(page - 1)}
-        >
+      {/* Pagination */}
+      <div className="pagination">
+        <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
         <span style={{ margin: "0 1rem" }}>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
-        <button
-          disabled={!next}
-          onClick={() => fetchPage(page + 1)}
-        >
+        <button disabled={!next} onClick={() => fetchPage(page + 1)}>
           Next ➡️
         </button>
       </div>
@@ -91,23 +108,21 @@ function Jockeys() {
       {showModal && (
         <AddJockeyModal
           onClose={() => setShowModal(false)}
-          onSuccess={(newHorse) => {
-            // Refetch current page to keep pagination consistent
-            fetchPage(page);
-            setShowModal(false);
-          }}
+          onSuccess={() => fetchPage(page)}
         />
       )}
+
       {editingJockey && (
         <EditJockeyModal
           jockey={editingJockey}
           onClose={() => setEditingJockey(null)}
           onSuccess={(updated) => {
-            setItems(items.map((h) => (h.id === updated.id ? updated : h)));
+            setItems(items.map((j) => (j.id === updated.id ? updated : j)));
             setEditingJockey(null);
           }}
         />
       )}
+
       {confirmDelete && (
         <ConfirmModal
           message={`Are you sure you want to delete "${confirmDelete.name}"?`}

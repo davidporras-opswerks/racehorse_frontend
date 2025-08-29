@@ -1,20 +1,22 @@
-// src/api/auth.js
-
 const API_BASE = "http://127.0.0.1:8000/api";
 
 export async function fetchWithAuth(endpoint, options = {}) {
-  // const method = (options.method || "GET").toUpperCase();
   let token = localStorage.getItem("access");
 
-  // Prepare headers
+  // Start headers empty
   const headers = {
-    "Content-Type": "application/json",
     ...options.headers,
   };
+
+  // Only set JSON Content-Type if body is not FormData
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
     console.log("Sending request with Bearer token:", token);
+    console.log("Sending body:", options.body);
   }
 
   let res = await fetch(`${API_BASE}${endpoint}`, {
@@ -22,7 +24,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
     headers,
   });
 
-  // Only try refresh if token exists and response is 401
+  // Refresh handling unchanged
   if (token && res.status === 401) {
     const refresh = localStorage.getItem("refresh");
     if (!refresh) {
@@ -39,7 +41,6 @@ export async function fetchWithAuth(endpoint, options = {}) {
       const refreshData = await refreshRes.json();
       localStorage.setItem("access", refreshData.access);
 
-      // Retry original request with new token
       token = refreshData.access;
       headers.Authorization = `Bearer ${token}`;
 
