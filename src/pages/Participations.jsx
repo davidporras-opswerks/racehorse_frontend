@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 import AddParticipationModal from "../components/AddParticipationModal";
 import EditParticipationModal from "../components/EditParticipationModal";
 import ConfirmModal from "../components/ConfirmModal";
@@ -64,6 +65,9 @@ function Participations() {
           <li key={p.id}>
             <strong>{p.racehorse_name}</strong> in <em>{p.race_name}</em> 🏆  
             — ridden by {p.jockey_name}, Position: {p.position} ({p.result_status})
+            <Link to={`/participations/${p.id}`}>
+              <button>View Details</button>
+            </Link>
             <button onClick={() => setEditingParticipation(p)}>✏️ Edit</button>
             <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>
           </li>
