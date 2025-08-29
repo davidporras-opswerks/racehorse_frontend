@@ -13,12 +13,15 @@ function Navbar() {
         </Link>
       </div>
       <div className="navbar-right">
+        <Link className="navbar-link" to="/racehorses">Racehorses</Link>
+        <Link className="navbar-link" to="/jockeys">Jockeys</Link>
+        <Link className="navbar-link" to="/races">Races</Link>
+        <Link className="navbar-link" to="/participations">Participations</Link>
+        <Link className="navbar-link" to="/users">Users</Link>
         {user ? (
           <>
-            <Link className="navbar-link" to="/racehorses">Racehorses</Link>
-            <Link className="navbar-link" to="/jockeys">Jockeys</Link>
-            <Link className="navbar-link" to="/races">Races</Link>
-            <Link className="navbar-link" to="/participations">Participations</Link>
+            
+            <Link className="navbar-link" to={`/users/${user.user_id}`}>{user.username}</Link>
 
             {/* 👇 Only visible if user.is_admin is true */}
             {user.is_admin && (

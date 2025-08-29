@@ -1,15 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import AddRacehorseModal from "../components/AddRacehorseModal";
-import EditRacehorseModal from "../components/EditRacehorseModal";
 import ConfirmModal from "../components/ConfirmModal";
+import EditUserModal from "../components/EditUserModal";
 
-function Racehorses() {
+function Users() {
   const { fetchWithAuth, logout, user } = useAuth();
   const [items, setItems] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editingHorse, setEditingHorse] = useState(null);
+  // const [showEdit, setShowEdit] = useState(false);
+  const [editingUser, setEditingUser] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   // Pagination state
@@ -21,7 +20,7 @@ function Racehorses() {
   const pageSize = 10; // Django default unless overridden
 
   const fetchPage = useCallback((pageNum) => {
-    fetchWithAuth(`/racehorses/?page=${pageNum}`)
+    fetchWithAuth(`/users/?page=${pageNum}`)
       .then((data) => {
         setItems(data.results || []);
         setCount(data.count || 0);
@@ -39,10 +38,10 @@ function Racehorses() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (horseId) => {
-    fetchWithAuth(`/racehorses/${horseId}/`, { method: "DELETE" })
+  const handleDelete = (userId) => {
+    fetchWithAuth(`/users/${userId}/`, { method: "DELETE" })
       .then(() => {
-        setItems(items.filter((h) => h.id !== horseId));
+        setItems(items.filter((u) => u.id !== userId));
         setConfirmDelete(null);
       })
       .catch((err) => {
@@ -53,20 +52,20 @@ function Racehorses() {
 
   return (
     <div>
-      <h1>Racehorses</h1>
-      {user && (
-        <button onClick={() => setShowModal(true)}>➕ Add Racehorse</button>
+      <h1>Users</h1>
+      {(user && user.is_admin) && (
+        <Link className="" to="/register">Register</Link>
       )}
 
       <ul>
-        {items.map((horse) => (
-          <li key={horse.id}>
-            {horse.name}{" "}
-            <Link to={`/racehorses/${horse.id}`}>
+        {items.map((u) => (
+          <li key={u.id}>
+            {u.username}{" "}
+            <Link to={`/users/${u.id}`}>
               <button>View Details</button>
             </Link>
-            {user && <button onClick={() => setEditingHorse(horse)}>✏️ Edit</button>}
-            {user && <button onClick={() => setConfirmDelete(horse)}>🗑️ Delete</button>}
+            {(user &&(user.is_admin || Number(user.user_id) === u.id)) && (<button onClick={() => setEditingUser(u)}>✏️ Edit</button>)}
+            {(user && user.is_admin) && <button onClick={() => setConfirmDelete(u)}>🗑️ Delete</button>}
           </li>
         ))}
       </ul>
@@ -90,24 +89,13 @@ function Racehorses() {
         </button>
       </div>
 
-      {showModal && (
-        <AddRacehorseModal
-          onClose={() => setShowModal(false)}
-          onSuccess={(newHorse) => {
-            // Refetch current page to keep pagination consistent
-            fetchPage(page);
-            setShowModal(false);
-          }}
-        />
-      )}
-
-      {editingHorse && (
-        <EditRacehorseModal
-          horse={editingHorse}
-          onClose={() => setEditingHorse(null)}
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={() => setEditingUser(null)}
           onSuccess={(updated) => {
-            setItems(items.map((h) => (h.id === updated.id ? updated : h)));
-            setEditingHorse(null);
+            setItems(items.map((u) => (u.id === updated.id ? updated : u)));
+            setEditingUser(null);
           }}
         />
       )}
@@ -122,4 +110,4 @@ function Racehorses() {
   );
 }
 
-export default Racehorses;
+export default Users;

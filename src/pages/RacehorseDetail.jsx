@@ -6,7 +6,7 @@ import ConfirmModal from "../components/ConfirmModal";
 
 function RacehorseDetail() {
   const { id } = useParams();
-  const { fetchWithAuth } = useAuth();
+  const { fetchWithAuth, user } = useAuth();
   const [horse, setHorse] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -51,8 +51,8 @@ function RacehorseDetail() {
       )}
 
       <button onClick={() => navigate(-1)}>⬅ Back</button>
-      <button onClick={() => setShowEdit(true)}>✏️ Edit</button>
-      <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>
+      {user && <button onClick={() => setShowEdit(true)}>✏️ Edit</button>}
+      {user && <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
       {showEdit && (
         <EditRacehorseModal
           horse={horse}

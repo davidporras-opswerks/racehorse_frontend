@@ -67,8 +67,8 @@ function Races() {
             <Link to={`/races/${race.id}`}>
               <button>View Details</button>
             </Link>
-            <button onClick={() => setEditingRace(race)}>✏️ Edit</button>
-            <button onClick={() => setConfirmDelete(race)}>🗑️ Delete</button>
+            {user && <button onClick={() => setEditingRace(race)}>✏️ Edit</button>}
+            {user && <button onClick={() => setConfirmDelete(race)}>🗑️ Delete</button>}
           </li>
         ))}
       </ul>

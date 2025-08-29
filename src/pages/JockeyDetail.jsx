@@ -6,7 +6,7 @@ import ConfirmModal from "../components/ConfirmModal";
 
 function JockeyDetail() {
   const { id } = useParams();
-  const { fetchWithAuth } = useAuth();
+  const { fetchWithAuth, user } = useAuth();
   const [jockey, setJockey] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -49,8 +49,8 @@ function JockeyDetail() {
       )}
 
       <button onClick={() => navigate(-1)}>⬅ Back</button>
-      <button onClick={() => setShowEdit(true)}>✏️ Edit</button>
-      <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>
+      {user && <button onClick={() => setShowEdit(true)}>✏️ Edit</button>}
+      {user && <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
 
       {showEdit && (
         <EditJockeyModal

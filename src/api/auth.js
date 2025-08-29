@@ -3,21 +3,27 @@
 const API_BASE = "http://127.0.0.1:8000/api";
 
 export async function fetchWithAuth(endpoint, options = {}) {
+  // const method = (options.method || "GET").toUpperCase();
   let token = localStorage.getItem("access");
 
-  console.log("Sending request with Bearer token:", token);
+  // Prepare headers
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+    console.log("Sending request with Bearer token:", token);
+  }
 
   let res = await fetch(`${API_BASE}${endpoint}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-      ...options.headers,
-    },
+    headers,
   });
 
-  // If token expired, try refresh
-  if (res.status === 401) {
+  // Only try refresh if token exists and response is 401
+  if (token && res.status === 401) {
     const refresh = localStorage.getItem("refresh");
     if (!refresh) {
       throw new Error("No refresh token available");
@@ -35,13 +41,11 @@ export async function fetchWithAuth(endpoint, options = {}) {
 
       // Retry original request with new token
       token = refreshData.access;
+      headers.Authorization = `Bearer ${token}`;
+
       res = await fetch(`${API_BASE}${endpoint}`, {
         ...options,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          ...options.headers,
-        },
+        headers,
       });
     } else {
       localStorage.removeItem("access");

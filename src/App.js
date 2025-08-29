@@ -11,6 +11,8 @@ import Participations from "./pages/Participations";
 import JockeyDetail from "./pages/JockeyDetail";
 import RaceDetail from "./pages/RaceDetail";
 import ParticipationDetail from "./pages/ParticipationDetail";
+import UserProfile from "./pages/UserProfile";
+import Users from "./pages/Users";
 
 function App() {
   const { user } = useAuth();
@@ -21,15 +23,17 @@ function App() {
 
       <Routes>
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/racehorses" />} />
-        <Route path="/racehorses" element={user ? <Racehorses /> : <Navigate to="/login" />} />
+        <Route path="/racehorses" element={<Racehorses />} />
         <Route path="/racehorses/:id" element={<RacehorseDetail />} />
-        <Route path="/jockeys" element={user ? <Jockeys /> : <Navigate to="/login" />} />
+        <Route path="/jockeys" element={<Jockeys />} />
         <Route path="/jockeys/:id" element={<JockeyDetail />} />
-        <Route path="/races" element={user ? <Races /> : <Navigate to="/login" />} />
+        <Route path="/races" element={<Races />} />
         <Route path="/races/:id" element={<RaceDetail />} />
-        <Route path="/participations" element={user ? <Participations /> : <Navigate to="/login" />} />
+        <Route path="/participations" element={<Participations />} />
         <Route path="/participations/:id" element={<ParticipationDetail />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/users/:id" element={<UserProfile />} />
       </Routes>
     </Router>
   );

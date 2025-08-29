@@ -15,6 +15,7 @@ export function AuthProvider({ children }) {
       try {
         const decoded = jwtDecode(token);
         setUser(decoded); // this contains user_id, is_admin, exp, etc.
+        console.log(decoded)
       } catch (err) {
         console.error("Invalid token in localStorage", err);
         localStorage.removeItem("access");

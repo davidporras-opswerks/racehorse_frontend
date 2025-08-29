@@ -63,8 +63,8 @@ function Jockeys() {
             <Link to={`/jockeys/${jockey.id}`}>
               <button>View Details</button>
             </Link>
-            <button onClick={() => setEditingJockey(jockey)}>✏️ Edit</button>
-            <button onClick={() => setConfirmDelete(jockey)}>🗑️ Delete</button>
+            {user && <button onClick={() => setEditingJockey(jockey)}>✏️ Edit</button>}
+            {user && <button onClick={() => setConfirmDelete(jockey)}>🗑️ Delete</button>}
           </li>
         ))}
       </ul>

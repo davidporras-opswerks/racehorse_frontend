@@ -68,8 +68,8 @@ function Participations() {
             <Link to={`/participations/${p.id}`}>
               <button>View Details</button>
             </Link>
-            <button onClick={() => setEditingParticipation(p)}>✏️ Edit</button>
-            <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>
+            {user && <button onClick={() => setEditingParticipation(p)}>✏️ Edit</button>}
+            {user && <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>}
           </li>
         ))}
       </ul>
