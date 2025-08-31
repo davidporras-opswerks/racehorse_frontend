@@ -1,21 +1,29 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithAuth } from "../api/auth";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // fixed import
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // store decoded user info
+  const [user, setUser] = useState(null); // will now include avatar
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On mount, check if we already have tokens
     const token = localStorage.getItem("access");
     if (token) {
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded); // this contains user_id, is_admin, exp, etc.
-        console.log(decoded)
+        const userId = decoded.user_id;
+        
+        // fetch full user profile including avatar
+        fetchWithAuth(`/users/${userId}/`)
+          .then((data) => {
+            setUser({ ...decoded, avatar: data.avatar || null });
+          })
+          .catch((err) => {
+            console.error("Failed to fetch user profile", err);
+            setUser(decoded); // fallback to token data
+          });
       } catch (err) {
         console.error("Invalid token in localStorage", err);
         localStorage.removeItem("access");
@@ -32,17 +40,20 @@ export function AuthProvider({ children }) {
       body: JSON.stringify({ username, password }),
     });
 
-    if (!res.ok) {
-      throw new Error("Invalid credentials");
-    }
+    if (!res.ok) throw new Error("Invalid credentials");
 
     const data = await res.json();
     localStorage.setItem("access", data.access);
     localStorage.setItem("refresh", data.refresh);
 
     const decoded = jwtDecode(data.access);
-    console.log(decoded)
-    setUser(decoded); // store token claims (user_id, is_admin, etc.)
+
+    // fetch full user profile
+    fetchWithAuth(`/users/${decoded.user_id}/`)
+      .then((profile) => {
+        setUser({ ...decoded, avatar: profile.avatar || null });
+      })
+      .catch(() => setUser(decoded));
   };
 
   const logout = () => {

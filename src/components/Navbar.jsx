@@ -1,16 +1,26 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import "./Navbar.css"; // 👈 import css
+import "./Navbar.css";
 import ThemeToggle from "./ThemeToggle";
+import horseshoeLight from "../assets/horseshoe-light.png";
+import horseshoeDark from "../assets/horseshoe-dark.png";
+import { useTheme } from "../context/ThemeProvider";
+import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const { theme } = useTheme();
 
   return (
     <nav className="navbar">
       <div className="navbar-left">
         <Link className="navbar-brand" to="/">
-          🏇 Race App
+          <img
+            src={theme === "dark" ? horseshoeDark : horseshoeLight}
+            alt="Uma Records"
+            className="navbar-logo"
+          />
+          Uma Records
         </Link>
       </div>
       <div className="navbar-right">
@@ -19,22 +29,32 @@ function Navbar() {
         <Link className="navbar-link" to="/races">Races</Link>
         <Link className="navbar-link" to="/participations">Participations</Link>
         <Link className="navbar-link" to="/users">Users</Link>
-        {user ? (
-          <>
-            
-            <Link className="navbar-link" to={`/users/${user.user_id}`}>{user.username}</Link>
-
-            {/* 👇 Only visible if user.is_admin is true */}
-            {user.is_admin && (
-              <Link className="navbar-link" to="/register">Register</Link>
-            )}
-
-            <button className="navbar-button" onClick={logout}>Logout</button>
-          </>
-        ) : (
-          <Link className="navbar-link" to="/login">Login</Link>
+        {user && user.is_admin && (
+          <Link className="navbar-link" to="/register">Register</Link>
         )}
-        <ThemeToggle></ThemeToggle>
+
+        {/* Theme toggle */}
+        <ThemeToggle />
+
+        {/* User avatar */}
+        {user && (
+          <Link to={`/users/${user.user_id}`} className="navbar-avatar-link">
+            <img
+              src={user.avatar || defaultAvatar} 
+              alt="User Avatar"
+              className="navbar-avatar"
+            />
+          </Link>
+        )}
+
+        {/* Optional logout button */}
+        {user && (
+          <button className="navbar-button logout" onClick={logout}>
+            Logout
+          </button>
+        )}
+
+        {!user && <Link className="navbar-link" to="/login">Login</Link>}
       </div>
     </nav>
   );

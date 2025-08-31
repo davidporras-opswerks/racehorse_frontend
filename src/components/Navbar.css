@@ -76,3 +76,27 @@ body.dark .navbar-brand,
 body.dark .navbar-link {
   color: var(--text); /* ✅ ensures light text on dark mode */
 }
+
+.navbar-logo {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.navbar-avatar-link {
+  margin-left: 10px;
+}
+
+.navbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.navbar-avatar:hover {
+  transform: scale(1.1);
+}
