@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditRacehorseModal from "../components/EditRacehorseModal";
 import ConfirmModal from "../components/ConfirmModal";
+import AddParticipationModal from "../components/AddParticipationModal";
 import "./RacehorseDetail.css";
 import defaultHorse from "../assets/default-horse.webp";
 import "../styles/DetailCommon.css";
@@ -13,6 +14,7 @@ function RacehorseDetail() {
   const [horse, setHorse] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showAddParticipation, setShowAddParticipation] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -98,6 +100,11 @@ function RacehorseDetail() {
           <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
           {user && <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>}
           {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+          {user && (
+            <button className="btn add" onClick={() => setShowAddParticipation(true)}>
+              Add Participation
+            </button>
+          )}
         </div>
       </div>
 
@@ -117,6 +124,19 @@ function RacehorseDetail() {
           message={`Are you sure you want to delete "${horse.name}"?`}
           onConfirm={handleDelete}
           onCancel={() => setConfirmDelete(false)}
+        />
+      )}
+      {showAddParticipation && (
+        <AddParticipationModal
+          defaultRacehorseId={horse.id}
+          onClose={() => setShowAddParticipation(false)}
+          onSuccess={(newParticipation) => {
+            setHorse((prev) => ({
+              ...prev,
+              participations: [...(prev.participations || []), newParticipation],
+            }));
+            setShowAddParticipation(false);
+          }}
         />
       )}
     </div>

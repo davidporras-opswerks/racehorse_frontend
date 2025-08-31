@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditRaceModal from "../components/EditRaceModal";
 import ConfirmModal from "../components/ConfirmModal";
+import AddParticipationModal from "../components/AddParticipationModal";
 import "../styles/DetailCommon.css";
 import "./RaceDetail.css"
 
@@ -12,6 +13,7 @@ function RaceDetail() {
   const [race, setRace] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showAddParticipation, setShowAddParticipation] = useState(false);
   const navigate = useNavigate();
 
   // lookup maps for human-readable labels
@@ -126,6 +128,14 @@ function RaceDetail() {
           <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
           {user && <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>}
           {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+          {user && (
+            <button
+              className="btn add"
+              onClick={() => setShowAddParticipation(true)}
+            >
+              Add Participation
+            </button>
+          )}
         </div>
       </div>
 
@@ -145,6 +155,19 @@ function RaceDetail() {
           message={`Are you sure you want to delete the race "${race.name}"?`}
           onConfirm={handleDelete}
           onCancel={() => setConfirmDelete(false)}
+        />
+      )}
+      {showAddParticipation && (
+        <AddParticipationModal
+          defaultRaceId={race.id} // <-- pre-select this race
+          onClose={() => setShowAddParticipation(false)}
+          onSuccess={(newParticipation) => {
+            setRace((prev) => ({
+              ...prev,
+              participations: [...(prev.participations || []), newParticipation],
+            }));
+            setShowAddParticipation(false);
+          }}
         />
       )}
     </div>

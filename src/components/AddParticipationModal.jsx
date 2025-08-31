@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import "./Modal.css";
 
-function AddParticipationModal({ onClose, onSuccess }) {
+function AddParticipationModal({ onClose, onSuccess, defaultRacehorseId, defaultJockeyId, defaultRaceId }) {
   const [form, setForm] = useState({
-    race: "",
-    racehorse: "",
-    jockey: "",
+    race: defaultRaceId || "",
+    racehorse: defaultRacehorseId || "", // set default
+    jockey: defaultJockeyId || "",
     position: "",
     finish_time: "",
     margin: "",
@@ -17,7 +17,6 @@ function AddParticipationModal({ onClose, onSuccess }) {
   const [existingRacehorses, setExistingRacehorses] = useState([]);
   const [existingJockeys, setExistingJockeys] = useState([]);
 
-  // fetch dropdown options
   useEffect(() => {
     const token = localStorage.getItem("access");
     const headers = { Authorization: `Bearer ${token}` };
@@ -69,8 +68,8 @@ function AddParticipationModal({ onClose, onSuccess }) {
       setMessage("❌ Error: " + JSON.stringify(err));
     }
   };
+
   const handleOverlayClick = (e) => {
-    // Close only if you click directly on the overlay, not inside the modal box
     if (e.target.classList.contains("modal-overlay")) {
       onClose();
     }
@@ -82,8 +81,6 @@ function AddParticipationModal({ onClose, onSuccess }) {
         <h2>Add Participation</h2>
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>
-          {/* Race selection */}
-          <label>Race</label>
           <select
             value={form.race}
             onChange={(e) => handleChange("race", e.target.value)}
@@ -97,8 +94,6 @@ function AddParticipationModal({ onClose, onSuccess }) {
             ))}
           </select>
 
-          {/* Racehorse selection */}
-          <label>Racehorse</label>
           <select
             value={form.racehorse}
             onChange={(e) => handleChange("racehorse", e.target.value)}
@@ -112,8 +107,6 @@ function AddParticipationModal({ onClose, onSuccess }) {
             ))}
           </select>
 
-          {/* Jockey selection */}
-          <label>Jockey</label>
           <select
             value={form.jockey}
             onChange={(e) => handleChange("jockey", e.target.value)}
@@ -127,7 +120,6 @@ function AddParticipationModal({ onClose, onSuccess }) {
             ))}
           </select>
 
-          {/* Participation details */}
           <input
             type="number"
             placeholder="Position"

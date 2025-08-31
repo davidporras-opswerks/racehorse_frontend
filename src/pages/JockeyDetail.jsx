@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditJockeyModal from "../components/EditJockeyModal";
 import ConfirmModal from "../components/ConfirmModal";
+import AddParticipationModal from "../components/AddParticipationModal";
 import "./JockeyDetail.css";
 import defaultJockey from "../assets/default-jockey.webp";
 import "../styles/DetailCommon.css";
@@ -13,6 +14,7 @@ function JockeyDetail() {
   const [jockey, setJockey] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [showAddParticipation, setShowAddParticipation] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,6 +127,14 @@ function JockeyDetail() {
           <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
           {user && <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>}
           {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+          {user && (
+            <button
+              className="btn add"
+              onClick={() => setShowAddParticipation(true)}
+            >
+              Add Participation
+            </button>
+          )}
         </div>
       </div>
 
@@ -144,6 +154,19 @@ function JockeyDetail() {
           message={`Are you sure you want to delete "${jockey.name}"?`}
           onConfirm={handleDelete}
           onCancel={() => setConfirmDelete(false)}
+        />
+      )}
+      {showAddParticipation && (
+        <AddParticipationModal
+          defaultJockeyId={jockey.id} // <-- pre-select this jockey
+          onClose={() => setShowAddParticipation(false)}
+          onSuccess={(newParticipation) => {
+            setJockey((prev) => ({
+              ...prev,
+              participations: [...(prev.participations || []), newParticipation],
+            }));
+            setShowAddParticipation(false);
+          }}
         />
       )}
     </div>

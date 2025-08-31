@@ -90,10 +90,10 @@ function Users() {
                 <button>View</button>
               </Link>
               {(user && (user.is_admin || Number(user.user_id) === u.id)) && (
-                <button onClick={() => setEditingUser(u)}>✏️ Edit</button>
+                <button onClick={() => setEditingUser(u)}>Edit</button>
               )}
               {(user && user.is_admin) && (
-                <button onClick={() => setConfirmDelete(u)}>🗑️ Delete</button>
+                <button onClick={() => setConfirmDelete(u)}>Delete</button>
               )}
             </div>
           </div>
@@ -103,13 +103,13 @@ function Users() {
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
-          ⬅️ Previous
+          Previous
         </button>
         <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
-          Next ➡️
+          Next
         </button>
       </div>
 
