@@ -3,12 +3,14 @@ import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import EditUserModal from "../components/EditUserModal";
+import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
+
+import "./Users.css"; // new stylesheet
 
 function Users() {
   const { fetchWithAuth, logout, user } = useAuth();
   const [items, setItems] = useState([]);
-  // const [showEdit, setShowEdit] = useState(false);
-  const [editingUser, setEditingUser] = useState(null)
+  const [editingUser, setEditingUser] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   // Pagination state
@@ -16,23 +18,25 @@ function Users() {
   const [count, setCount] = useState(0);
   const [next, setNext] = useState(null);
   const [previous, setPrevious] = useState(null);
+  const pageSize = 10;
 
-  const pageSize = 10; // Django default unless overridden
-
-  const fetchPage = useCallback((pageNum) => {
-    fetchWithAuth(`/users/?page=${pageNum}`)
-      .then((data) => {
-        setItems(data.results || []);
-        setCount(data.count || 0);
-        setNext(data.next);
-        setPrevious(data.previous);
-        setPage(pageNum);
-      })
-      .catch((err) => {
-        console.error(err);
-        logout();
-      });
-  }, [fetchWithAuth, logout]);
+  const fetchPage = useCallback(
+    (pageNum) => {
+      fetchWithAuth(`/users/?page=${pageNum}`)
+        .then((data) => {
+          setItems(data.results || []);
+          setCount(data.count || 0);
+          setNext(data.next);
+          setPrevious(data.previous);
+          setPage(pageNum);
+        })
+        .catch((err) => {
+          console.error(err);
+          logout();
+        });
+    },
+    [fetchWithAuth, logout]
+  );
 
   useEffect(() => {
     fetchPage(1);
@@ -45,50 +49,71 @@ function Users() {
         setConfirmDelete(null);
       })
       .catch((err) => {
-        console.error("Failed to delete racehorse:", err);
+        console.error("Failed to delete user:", err);
         alert("Delete failed");
       });
   };
 
   return (
-    <div>
-      <h1>Users</h1>
+    <div className="users-page">
+      <h1 className="page-title">Users</h1>
+
       {(user && user.is_admin) && (
-        <Link className="" to="/register">Register</Link>
+        <Link className="add-button" to="/register">
+          Register New User
+        </Link>
       )}
 
-      <ul>
+      <div className="user-list">
         {items.map((u) => (
-          <li key={u.id}>
-            {u.username}{" "}
-            <Link to={`/users/${u.id}`}>
-              <button>View Details</button>
-            </Link>
-            {(user &&(user.is_admin || Number(user.user_id) === u.id)) && (<button onClick={() => setEditingUser(u)}>✏️ Edit</button>)}
-            {(user && user.is_admin) && <button onClick={() => setConfirmDelete(u)}>🗑️ Delete</button>}
-          </li>
+          <div key={u.id} className="user-card">
+            <img
+              src={u.avatar || defaultAvatar}
+              alt={u.username}
+              className="user-avatar"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = defaultAvatar;
+              }}
+            />
+            <div className="user-info">
+              <h3>{u.username}</h3>
+              <p>{u.email}</p>
+              <div className="user-badges">
+                {u.is_superuser && <span className="badge superuser">Superuser</span>}
+                {!u.is_superuser && u.is_staff && <span className="badge staff">Staff</span>}
+                {!u.is_staff && <span className="badge regular">User</span>}
+              </div>
+            </div>
+            <div className="user-actions">
+              <Link to={`/users/${u.id}`}>
+                <button>View</button>
+              </Link>
+              {(user && (user.is_admin || Number(user.user_id) === u.id)) && (
+                <button onClick={() => setEditingUser(u)}>✏️ Edit</button>
+              )}
+              {(user && user.is_admin) && (
+                <button onClick={() => setConfirmDelete(u)}>🗑️ Delete</button>
+              )}
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
 
-      {/* Pagination controls */}
-      <div style={{ marginTop: "1rem" }}>
-        <button
-          disabled={!previous}
-          onClick={() => fetchPage(page - 1)}
-        >
+      {/* Pagination */}
+      <div className="pagination">
+        <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
-        <span style={{ margin: "0 1rem" }}>
+        <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
-        <button
-          disabled={!next}
-          onClick={() => fetchPage(page + 1)}
-        >
+        <button disabled={!next} onClick={() => fetchPage(page + 1)}>
           Next ➡️
         </button>
       </div>
 
+      {/* Modals */}
       {editingUser && (
         <EditUserModal
           editUser={editingUser}
@@ -101,7 +126,7 @@ function Users() {
       )}
       {confirmDelete && (
         <ConfirmModal
-          message={`Are you sure you want to delete "${confirmDelete.name}"?`}
+          message={`Are you sure you want to delete "${confirmDelete.username}"?`}
           onConfirm={() => handleDelete(confirmDelete.id)}
           onCancel={() => setConfirmDelete(null)}
         />

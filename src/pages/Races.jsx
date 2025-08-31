@@ -5,7 +5,7 @@ import AddRaceModal from "../components/AddRaceModal";
 import EditRaceModal from "../components/EditRaceModal";
 import ConfirmModal from "../components/ConfirmModal";
 import RaceFilterModal from "../components/RaceFilterModal";
-import "./Racehorses.css"; // reuse same CSS
+import "./Racehorses.css"; // reuse same styling
 
 function Races() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -26,8 +26,8 @@ function Races() {
     track_surface: "",
     classification: "",
     season: "",
-    date_after: "", // for date__gt
-    date_before: "", // for date__lt
+    date_after: "",
+    date_before: "",
   });
 
   const [search, setSearch] = useState("");
@@ -47,7 +47,6 @@ function Races() {
               params.append("date__lt", value);
               break;
             default:
-              // partial match for text fields, exact for others
               if (["location"].includes(key)) {
                 params.append(`${key}__icontains`, value);
               } else {
@@ -57,7 +56,6 @@ function Races() {
         }
       });
 
-      // Search by name
       if (search.trim() !== "") {
         params.append("search", search);
       }
@@ -95,13 +93,14 @@ function Races() {
   };
 
   return (
-    <div>
-      <h1>Races</h1>
+    <div className="racehorses-page">
+      <h1 className="page-title">Races</h1>
 
+      {/* Search + Filter */}
       <div className="filter-search-container">
         <input
           type="text"
-          placeholder="Search by name..."
+          placeholder="Search by race name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -109,27 +108,62 @@ function Races() {
         <button onClick={() => setShowFilterModal(true)}>⚙️ Filters</button>
       </div>
 
-      {user && <button onClick={() => setShowModal(true)}>➕ Add Race</button>}
+      {/* Add race */}
+      {user && (
+        <button className="add-button" onClick={() => setShowModal(true)}>
+          Add Race
+        </button>
+      )}
 
-      <ul>
+      {/* Grid of race cards */}
+      <div className="racehorse-grid">
         {items.map((race) => (
-          <li key={race.id}>
-            {race.name}{" "}
-            <Link to={`/races/${race.id}`}>
-              <button>View Details</button>
-            </Link>
-            {user && <button onClick={() => setEditingRace(race)}>✏️ Edit</button>}
-            {user && <button onClick={() => setConfirmDelete(race)}>🗑️ Delete</button>}
-          </li>
+          <div key={race.id} className="racehorse-card">
+            <div className="racehorse-info">
+              <h3>{race.name}</h3>
+              <p>
+                <strong>Date:</strong>{" "}
+                {new Date(race.date).toLocaleDateString()}
+              </p>
+              <p>
+                <strong>Location:</strong> {race.location}
+              </p>
+              <p>
+                <strong>Classification:</strong> {race.classification} |{" "}
+                <strong>Surface:</strong> {race.track_surface}
+              </p>
+              <p>
+                <strong>Length:</strong> {race.track_length}m
+              </p>
+              <p>
+                <strong>Winner:</strong> {race.winner || "N/A"}
+              </p>
+              <p>
+                <strong>Participants:</strong> {race.total_participants}
+              </p>
+
+              <div className="card-actions">
+                <Link to={`/races/${race.id}`}>
+                  <button>View</button>
+                </Link>
+                {user && (
+                  <>
+                    <button onClick={() => setEditingRace(race)}>✏️ Edit</button>
+                    <button onClick={() => setConfirmDelete(race)}>🗑️ Delete</button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
-        <span style={{ margin: "0 1rem" }}>
+        <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
@@ -137,13 +171,13 @@ function Races() {
         </button>
       </div>
 
+      {/* Modals */}
       {showModal && (
         <AddRaceModal
           onClose={() => setShowModal(false)}
           onSuccess={() => fetchPage(page)}
         />
       )}
-
       {editingRace && (
         <EditRaceModal
           race={editingRace}
@@ -154,7 +188,6 @@ function Races() {
           }}
         />
       )}
-
       {confirmDelete && (
         <ConfirmModal
           message={`Are you sure you want to delete "${confirmDelete.name}"?`}
@@ -162,7 +195,6 @@ function Races() {
           onCancel={() => setConfirmDelete(null)}
         />
       )}
-
       {showFilterModal && (
         <RaceFilterModal
           filters={filters}

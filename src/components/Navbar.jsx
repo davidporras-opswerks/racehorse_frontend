@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Navbar.css"; // 👈 import css
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -33,6 +34,7 @@ function Navbar() {
         ) : (
           <Link className="navbar-link" to="/login">Login</Link>
         )}
+        <ThemeToggle></ThemeToggle>
       </div>
     </nav>
   );

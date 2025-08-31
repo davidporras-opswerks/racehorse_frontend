@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import AddJockeyModal from "../components/AddJockeyModal";
 import EditJockeyModal from "../components/EditJockeyModal";
 import ConfirmModal from "../components/ConfirmModal";
-import "./Racehorses.css"; // reuse the same CSS for buttons, pagination, etc.
+import "./Racehorses.css"; // reuse same styling
+import defaultJockey from "../assets/default-jockey.webp";
 
 function Jockeys() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -25,7 +26,6 @@ function Jockeys() {
     (pageNum = 1) => {
       const params = new URLSearchParams({ page: pageNum });
 
-      // Search (matches JockeyFilter & SearchFilter)
       if (search.trim() !== "") {
         params.append("search", search);
       }
@@ -63,10 +63,10 @@ function Jockeys() {
   };
 
   return (
-    <div>
-      <h1>Jockeys</h1>
+    <div className="racehorses-page">
+      <h1 className="page-title">Jockeys</h1>
 
-      {/* Search input */}
+      {/* Search bar */}
       <div className="filter-search-container">
         <input
           type="text"
@@ -77,27 +77,56 @@ function Jockeys() {
         <button onClick={() => fetchPage(1)}>Search</button>
       </div>
 
-      {user && <button onClick={() => setShowModal(true)}>➕ Add Jockey</button>}
+      {/* Add button */}
+      {user && (
+        <button
+          className="add-button"
+          onClick={() => setShowModal(true)}
+        >
+          Add Jockey
+        </button>
+      )}
 
-      <ul>
+      {/* Grid of cards */}
+      <div className="racehorse-grid">
         {items.map((jockey) => (
-          <li key={jockey.id}>
-            {jockey.name}{" "}
-            <Link to={`/jockeys/${jockey.id}`}>
-              <button>View Details</button>
-            </Link>
-            {user && <button onClick={() => setEditingJockey(jockey)}>✏️ Edit</button>}
-            {user && <button onClick={() => setConfirmDelete(jockey)}>🗑️ Delete</button>}
-          </li>
+          <div key={jockey.id} className="racehorse-card">
+            <img
+              src={
+                jockey.image ||
+                defaultJockey
+              }
+              alt={jockey.name}
+              className="racehorse-image"
+            />
+            <div className="racehorse-info">
+              <h3>{jockey.name}</h3>
+              <p><strong>Races:</strong> {jockey.total_races}</p>
+              <p><strong>Wins:</strong> {jockey.total_wins}</p>
+              <p><strong>Win Rate:</strong> {jockey.win_rate}%</p>
+
+              <div className="card-actions">
+                <Link to={`/jockeys/${jockey.id}`}>
+                  <button>View</button>
+                </Link>
+                {user && (
+                  <>
+                    <button onClick={() => setEditingJockey(jockey)}>✏️ Edit</button>
+                    <button onClick={() => setConfirmDelete(jockey)}>🗑️ Delete</button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
-        <span style={{ margin: "0 1rem" }}>
+        <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
@@ -105,6 +134,7 @@ function Jockeys() {
         </button>
       </div>
 
+      {/* Modals */}
       {showModal && (
         <AddJockeyModal
           onClose={() => setShowModal(false)}

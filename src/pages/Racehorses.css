@@ -1,69 +1,154 @@
-/* Racehorses.css */
-
-/* Modal overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.racehorses-page {
+  padding: 20px;
 }
 
-/* Modal content box */
-.modal-content {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 300px;
-  max-width: 90%;
-}
-
-/* Inputs in modal */
-.modal-content input,
-.modal-content select {
-  display: block;
-  margin-bottom: 1rem;
-  width: 100%;
-  padding: 0.4rem 0.5rem;
-  font-size: 1rem;
-}
-
-/* Buttons */
-button {
-  cursor: pointer;
-  padding: 0.4rem 0.8rem;
-  font-size: 1rem;
-  margin-right: 0.5rem;
-}
-
-.pagination {
-  margin-top: 1rem;
+.page-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: var(--text);
 }
 
 .filter-search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
   margin-bottom: 1rem;
 }
 
 .filter-search-container input {
-  margin-right: 0.5rem;
-  padding: 0.4rem 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  flex: 1;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.filter-search-container button,
+.add-button {
+  background: var(--link-color);
+  border: none;
+  padding: 0.5rem 1rem;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filter-search-container button:hover,
+.add-button:hover {
+  filter: brightness(1.2);
+}
+
+.add-button {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.racehorse-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.racehorse-card {
+  background: var(--bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.racehorse-card:hover {
+  transform: translateY(-4px);
+}
+
+.racehorse-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.racehorse-info {
+  padding: 1rem;
+}
+
+.racehorse-info h3 {
+  margin: 0 0 0.5rem;
+  color: var(--text);
+}
+
+.racehorse-info p {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.card-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card-actions button {
+  flex: 1;
+  background: var(--link-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.card-actions button:hover {
+  filter: brightness(1.2);
+}
+
+.card-actions button:last-child {
+  background: #dc2626;
+}
+
+.card-actions button:last-child:hover {
+  background: #b91c1c;
+}
+
+.pagination {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text);
   font-size: 1rem;
 }
 
-.filter-search-container button {
-  margin-left: 0.5rem;
+.pagination button {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--link-color);
+  background: var(--bg);
+  color: var(--link-color);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
 }
 
-/* List of racehorses */
-ul {
-  list-style: none;
-  padding: 0;
+.pagination button:hover:not(:disabled) {
+  background: var(--link-color);
+  color: white;
 }
 
-ul li {
-  margin-bottom: 0.5rem;
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination span {
+  font-weight: bold;
+  color: var(--text);
 }

@@ -6,6 +6,7 @@ import EditParticipationModal from "../components/EditParticipationModal";
 import ConfirmModal from "../components/ConfirmModal";
 import ParticipationFilterModal from "../components/ParticipationFilterModal";
 import "./Racehorses.css";
+import defaultHorse from "../assets/default-horse.webp";
 
 function Participations() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -30,11 +31,19 @@ function Participations() {
   });
   const [search, setSearch] = useState("");
 
+  // Season mapping
+  const seasonMap = {
+    SP: "Spring",
+    SU: "Summer",
+    FA: "Fall",
+    WI: "Winter",
+  };
+
+
   const fetchPage = useCallback(
     (pageNum = 1) => {
       const params = new URLSearchParams({ page: pageNum });
 
-      // Add filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== "") {
           if (key === "position") params.append("position", value);
@@ -45,7 +54,6 @@ function Participations() {
         }
       });
 
-      // Search
       if (search.trim() !== "") {
         params.append("search", search);
       }
@@ -82,10 +90,22 @@ function Participations() {
       });
   };
 
-  return (
-    <div>
-      <h1>Participations</h1>
+  // Group participations by race name + date + season
+  const groupedByRace = items.reduce((groups, p) => {
+    const seasonName = seasonMap[p.race_season] || p.race_season;
+    const key = `${p.race_name} | ${p.race_date} (${seasonName})`;
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+    return groups;
+  }, {});
 
+
+
+  return (
+    <div className="racehorses-page">
+      <h1 className="page-title">Participations</h1>
+
+      {/* Search + Filters */}
       <div className="filter-search-container">
         <input
           type="text"
@@ -97,34 +117,98 @@ function Participations() {
         <button onClick={() => setShowFilterModal(true)}>⚙️ Filters</button>
       </div>
 
-      {user && <button onClick={() => setShowModal(true)}>➕ Add Participation</button>}
+      {/* Add button */}
+      {user && (
+        <button className="add-button" onClick={() => setShowModal(true)}>
+          Add Participation
+        </button>
+      )}
 
-      <ul>
-        {items.map((p) => (
-          <li key={p.id}>
-            <strong>{p.racehorse_name}</strong> in <em>{p.race_name}</em> 🏆
-            — ridden by {p.jockey_name}, Position: {p.position} ({p.result_status})
-            <Link to={`/participations/${p.id}`}>
-              <button>View Details</button>
-            </Link>
-            {user && <button onClick={() => setEditingParticipation(p)}>✏️ Edit</button>}
-            {user && <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>}
-          </li>
-        ))}
-      </ul>
+      {/* Races with their participations */}
+      {Object.keys(groupedByRace).map((raceKey) => (
+        <div key={raceKey} className="race-section">
+          <h2 className="race-title">{raceKey}</h2>
+          <div className="racehorse-grid">
+            {groupedByRace[raceKey].map((p) => (
+              <div key={p.id} className="racehorse-card">
+                <img
+                  src={p.racehorse_image || defaultHorse}
+                  alt={p.racehorse_name}
+                  className="racehorse-image"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = defaultHorse;
+                  }}
+                />
+                <div className="racehorse-info">
+                  <h3>
+                    {p.racehorse_name}{" "}
+                    {p.is_winner && <span style={{ color: "gold" }}>🏆</span>}
+                  </h3>
+                  <p>
+                    <strong>Jockey:</strong> {p.jockey_name}
+                  </p>
+                  <p>
+                    <strong>Position:</strong> {p.position} — {p.result_status}
+                  </p>
+                  {p.finish_time && (
+                    <p>
+                      <strong>Time:</strong> {p.finish_time}
+                    </p>
+                  )}
+                  {p.margin && (
+                    <p>
+                      <strong>Margin:</strong> {p.margin} lengths
+                    </p>
+                  )}
+                  {p.odds && (
+                    <p>
+                      <strong>Odds:</strong> {p.odds}
+                    </p>
+                  )}
 
+                  {/* Actions */}
+                  <div className="card-actions">
+                    <Link to={`/participations/${p.id}`}>
+                      <button>View</button>
+                    </Link>
+                    {user && (
+                      <>
+                        <button onClick={() => setEditingParticipation(p)}>
+                          ✏️ Edit
+                        </button>
+                        <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* Pagination */}
       <div className="pagination">
-        <button disabled={!previous} onClick={() => fetchPage(page - 1)}>⬅️ Previous</button>
-        <span style={{ margin: "0 1rem" }}>
+        <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
+          ⬅️ Previous
+        </button>
+        <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
-        <button disabled={!next} onClick={() => fetchPage(page + 1)}>Next ➡️</button>
+        <button disabled={!next} onClick={() => fetchPage(page + 1)}>
+          Next ➡️
+        </button>
       </div>
 
+      {/* Modals */}
       {showModal && (
         <AddParticipationModal
           onClose={() => setShowModal(false)}
-          onSuccess={() => { fetchPage(page); setShowModal(false); }}
+          onSuccess={() => {
+            fetchPage(page);
+            setShowModal(false);
+          }}
         />
       )}
       {editingParticipation && (
@@ -148,7 +232,10 @@ function Participations() {
         <ParticipationFilterModal
           filters={filters}
           onChange={setFilters}
-          onApply={() => { fetchPage(1); setShowFilterModal(false); }}
+          onApply={() => {
+            fetchPage(1);
+            setShowFilterModal(false);
+          }}
           onClose={() => setShowFilterModal(false)}
         />
       )}

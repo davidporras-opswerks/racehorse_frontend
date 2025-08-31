@@ -5,7 +5,8 @@ import AddRacehorseModal from "../components/AddRacehorseModal";
 import EditRacehorseModal from "../components/EditRacehorseModal";
 import ConfirmModal from "../components/ConfirmModal";
 import FilterModal from "../components/FilterModal";
-import "./Racehorses.css";  // import the CSS
+import "./Racehorses.css";
+import defaultHorse from "../assets/default-horse.webp";
 
 function Racehorses() {
   const { fetchWithAuth, logout, user } = useAuth();
@@ -80,9 +81,10 @@ function Racehorses() {
       });
   };
 
+
   return (
-    <div>
-      <h1>Racehorses</h1>
+    <div className="racehorses-page">
+      <h1 className="page-title">Racehorses</h1>
 
       <div className="filter-search-container">
         <input
@@ -95,26 +97,47 @@ function Racehorses() {
         <button onClick={() => setShowFilterModal(true)}>⚙️ Filters</button>
       </div>
 
-      {user && <button onClick={() => setShowModal(true)}>➕ Add Racehorse</button>}
+      {user && (
+        <button className="add-button" onClick={() => setShowModal(true)}>
+          Add Racehorse
+        </button>
+      )}
 
-      <ul>
+      <div className="racehorse-grid">
         {items.map((horse) => (
-          <li key={horse.id}>
-            {horse.name}{" "}
-            <Link to={`/racehorses/${horse.id}`}>
-              <button>View Details</button>
-            </Link>
-            {user && <button onClick={() => setEditingHorse(horse)}>✏️ Edit</button>}
-            {user && <button onClick={() => setConfirmDelete(horse)}>🗑️ Delete</button>}
-          </li>
+          <div key={horse.id} className="racehorse-card">
+            <img
+              src={horse.image || defaultHorse}
+              alt={horse.name}
+              className="racehorse-image"
+            />
+            <div className="racehorse-info">
+              <h3>{horse.name}</h3>
+              <p><strong>Breed:</strong> {horse.breed || "Unknown"}</p>
+              <p><strong>Country:</strong> {horse.country || "Unknown"}</p>
+              <p><strong>Wins:</strong> {horse.total_wins} / {horse.total_races}</p>
+              <p><strong>Win Rate:</strong> {horse.win_rate}%</p>
+              <div className="card-actions">
+                <Link to={`/racehorses/${horse.id}`}>
+                  <button>View</button>
+                </Link>
+                {user && (
+                  <>
+                    <button onClick={() => setEditingHorse(horse)}>✏️ Edit</button>
+                    <button onClick={() => setConfirmDelete(horse)}>🗑️ Delete</button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
 
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           ⬅️ Previous
         </button>
-        <span style={{ margin: "0 1rem" }}>
+        <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
@@ -122,13 +145,13 @@ function Racehorses() {
         </button>
       </div>
 
+      {/* Modals */}
       {showModal && (
         <AddRacehorseModal
           onClose={() => setShowModal(false)}
           onSuccess={() => fetchPage(page)}
         />
       )}
-
       {editingHorse && (
         <EditRacehorseModal
           horse={editingHorse}
@@ -139,7 +162,6 @@ function Racehorses() {
           }}
         />
       )}
-
       {confirmDelete && (
         <ConfirmModal
           message={`Are you sure you want to delete "${confirmDelete.name}"?`}
@@ -147,7 +169,6 @@ function Racehorses() {
           onCancel={() => setConfirmDelete(null)}
         />
       )}
-
       {showFilterModal && (
         <FilterModal
           filters={filters}
