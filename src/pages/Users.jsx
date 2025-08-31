@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import ConfirmModal from "../components/ConfirmModal";
 import EditUserModal from "../components/EditUserModal";
 import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
-
 import "./Users.css"; // new stylesheet
 
 function Users() {
@@ -42,16 +41,22 @@ function Users() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (userId) => {
-    fetchWithAuth(`/users/${userId}/`, { method: "DELETE" })
-      .then(() => {
-        setItems(items.filter((u) => u.id !== userId));
-        setConfirmDelete(null);
-      })
-      .catch((err) => {
-        console.error("Failed to delete user:", err);
-        alert("Delete failed");
-      });
+  const handleDelete = async (userId) => {
+    try {
+      await fetchWithAuth(`/users/${userId}/`, { method: "DELETE" });
+      setConfirmDelete(null);
+
+      // Check if current page will be empty after deletion
+      const remainingItems = items.filter((u) => u.id !== userId);
+      if (remainingItems.length === 0 && page > 1) {
+        fetchPage(page - 1); // go to previous page
+      } else {
+        fetchPage(page); // refresh current page
+      }
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+      alert("Delete failed");
+    }
   };
 
   return (
@@ -121,6 +126,7 @@ function Users() {
           onSuccess={(updated) => {
             setItems(items.map((u) => (u.id === updated.id ? updated : u)));
             setEditingUser(null);
+            fetchPage(page);
           }}
         />
       )}

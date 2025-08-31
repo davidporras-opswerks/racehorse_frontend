@@ -80,16 +80,22 @@ function Races() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (raceId) => {
-    fetchWithAuth(`/races/${raceId}/`, { method: "DELETE" })
-      .then(() => {
-        setItems(items.filter((r) => r.id !== raceId));
-        setConfirmDelete(null);
-      })
-      .catch((err) => {
-        console.error("Failed to delete race:", err);
-        alert("Delete failed");
-      });
+  const handleDelete = async (raceId) => {
+    try {
+      await fetchWithAuth(`/races/${raceId}/`, { method: "DELETE" });
+      setConfirmDelete(null);
+
+      // Check if current page will be empty after deletion
+      const remainingItems = items.filter((r) => r.id !== raceId);
+      if (remainingItems.length === 0 && page > 1) {
+        fetchPage(page - 1); // go to previous page
+      } else {
+        fetchPage(page); // stay on current page
+      }
+    } catch (err) {
+      console.error("Failed to delete race:", err);
+      alert("Delete failed");
+    }
   };
 
   return (
@@ -185,6 +191,7 @@ function Races() {
           onSuccess={(updated) => {
             setItems(items.map((r) => (r.id === updated.id ? updated : r)));
             setEditingRace(null);
+            fetchPage(page);
           }}
         />
       )}

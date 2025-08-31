@@ -6,6 +6,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
   // Start headers empty
   const headers = {
     ...options.headers,
+    "Cache-Control": "no-store, no-cache,", // prevent browser caching
   };
 
   // Only set JSON Content-Type if body is not FormData
@@ -15,8 +16,6 @@ export async function fetchWithAuth(endpoint, options = {}) {
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
-    console.log("Sending request with Bearer token:", token);
-    console.log("Sending body:", options.body);
   }
 
   let res = await fetch(`${API_BASE}${endpoint}`, {
@@ -24,12 +23,10 @@ export async function fetchWithAuth(endpoint, options = {}) {
     headers,
   });
 
-  // Refresh handling unchanged
+  // Refresh handling
   if (token && res.status === 401) {
     const refresh = localStorage.getItem("refresh");
-    if (!refresh) {
-      throw new Error("No refresh token available");
-    }
+    if (!refresh) throw new Error("No refresh token available");
 
     const refreshRes = await fetch(`${API_BASE}/token/refresh/`, {
       method: "POST",
@@ -44,10 +41,7 @@ export async function fetchWithAuth(endpoint, options = {}) {
       token = refreshData.access;
       headers.Authorization = `Bearer ${token}`;
 
-      res = await fetch(`${API_BASE}${endpoint}`, {
-        ...options,
-        headers,
-      });
+      res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
     } else {
       localStorage.removeItem("access");
       localStorage.removeItem("refresh");
@@ -55,5 +49,10 @@ export async function fetchWithAuth(endpoint, options = {}) {
     }
   }
 
-  return res.json();
+  // Only parse JSON if response has content
+  if (res.status !== 204) {
+    return res.json();
+  } else {
+    return null;
+  }
 }

@@ -50,16 +50,22 @@ function Jockeys() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (jockeyId) => {
-    fetchWithAuth(`/jockeys/${jockeyId}/`, { method: "DELETE" })
-      .then(() => {
-        setItems(items.filter((j) => j.id !== jockeyId));
-        setConfirmDelete(null);
-      })
-      .catch((err) => {
-        console.error("Failed to delete jockey:", err);
-        alert("Delete failed");
-      });
+  const handleDelete = async (jockeyId) => {
+    try {
+      await fetchWithAuth(`/jockeys/${jockeyId}/`, { method: "DELETE" });
+      setConfirmDelete(null);
+
+      // Check if current page will be empty after deletion
+      const remainingItems = items.filter((j) => j.id !== jockeyId);
+      if (remainingItems.length === 0 && page > 1) {
+        fetchPage(page - 1); // go to previous page
+      } else {
+        fetchPage(page); // stay on current page
+      }
+    } catch (err) {
+      console.error("Failed to delete jockey:", err);
+      alert("Delete failed");
+    }
   };
 
   return (
@@ -92,10 +98,7 @@ function Jockeys() {
         {items.map((jockey) => (
           <div key={jockey.id} className="racehorse-card">
             <img
-              src={
-                jockey.image ||
-                defaultJockey
-              }
+              src={jockey.image || defaultJockey}
               alt={jockey.name}
               className="racehorse-image"
             />
@@ -124,7 +127,7 @@ function Jockeys() {
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
-          ⬅Previous
+          Previous
         </button>
         <span>
           Page {page} of {Math.ceil(count / pageSize)}
@@ -149,6 +152,7 @@ function Jockeys() {
           onSuccess={(updated) => {
             setItems(items.map((j) => (j.id === updated.id ? updated : j)));
             setEditingJockey(null);
+            fetchPage(page);
           }}
         />
       )}

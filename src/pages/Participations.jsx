@@ -31,14 +31,12 @@ function Participations() {
   });
   const [search, setSearch] = useState("");
 
-  // Season mapping
   const seasonMap = {
     SP: "Spring",
     SU: "Summer",
     FA: "Fall",
     WI: "Winter",
   };
-
 
   const fetchPage = useCallback(
     (pageNum = 1) => {
@@ -78,19 +76,24 @@ function Participations() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (id) => {
-    fetchWithAuth(`/participations/${id}/`, { method: "DELETE" })
-      .then(() => {
-        setItems(items.filter((p) => p.id !== id));
-        setConfirmDelete(null);
-      })
-      .catch((err) => {
-        console.error("Failed to delete participation:", err);
-        alert("Delete failed");
-      });
+  const handleDelete = async (id) => {
+    try {
+      await fetchWithAuth(`/participations/${id}/`, { method: "DELETE" });
+      setConfirmDelete(null);
+
+      // Check if current page will be empty after deletion
+      const remainingItems = items.filter((p) => p.id !== id);
+      if (remainingItems.length === 0 && page > 1) {
+        fetchPage(page - 1); // go to previous page
+      } else {
+        fetchPage(page); // stay on current page
+      }
+    } catch (err) {
+      console.error("Failed to delete participation:", err);
+      alert("Delete failed");
+    }
   };
 
-  // Group participations by race name + date + season
   const groupedByRace = items.reduce((groups, p) => {
     const seasonName = seasonMap[p.race_season] || p.race_season;
     const key = `${p.race_name} | ${p.race_date} (${seasonName})`;
@@ -98,8 +101,6 @@ function Participations() {
     groups[key].push(p);
     return groups;
   }, {});
-
-
 
   return (
     <div className="racehorses-page">
@@ -167,7 +168,6 @@ function Participations() {
                     </p>
                   )}
 
-                  {/* Actions */}
                   <div className="card-actions">
                     <Link to={`/participations/${p.id}`}>
                       <button>View</button>
@@ -218,6 +218,7 @@ function Participations() {
           onSuccess={(updated) => {
             setItems(items.map((p) => (p.id === updated.id ? updated : p)));
             setEditingParticipation(null);
+            fetchPage(page);
           }}
         />
       )}

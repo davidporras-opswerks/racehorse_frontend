@@ -1,5 +1,5 @@
 import React from "react";
-import "../pages/Racehorses.css";
+import "./FilterModal";
 
 function RaceFilterModal({ filters, onChange, onApply, onClose }) {
   const handleChange = (e) => {
@@ -108,7 +108,7 @@ function RaceFilterModal({ filters, onChange, onApply, onClose }) {
         </select>
 
         <label>
-          Date After:
+          Date After: 
           <input
             type="date"
             name="date_after"
@@ -118,7 +118,7 @@ function RaceFilterModal({ filters, onChange, onApply, onClose }) {
         </label>
 
         <label>
-          Date Before:
+          Date Before: 
           <input
             type="date"
             name="date_before"

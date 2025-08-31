@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "./Navbar.css";
 import ThemeToggle from "./ThemeToggle";
@@ -8,8 +8,14 @@ import { useTheme } from "../context/ThemeProvider";
 import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
 
 function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout: logoutOriginal } = useAuth();
   const { theme } = useTheme();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    logoutOriginal();
+    navigate("/racehorses"); // redirect after logout
+  };
 
   return (
     <nav className="navbar">

@@ -69,16 +69,22 @@ function Racehorses() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = (horseId) => {
-    fetchWithAuth(`/racehorses/${horseId}/`, { method: "DELETE" })
-      .then(() => {
-        setItems(items.filter((h) => h.id !== horseId));
-        setConfirmDelete(null);
-      })
-      .catch((err) => {
-        console.error("Failed to delete racehorse:", err);
-        alert("Delete failed");
-      });
+  const handleDelete = async (horseId) => {
+    try {
+      await fetchWithAuth(`/racehorses/${horseId}/`, { method: "DELETE" });
+      setConfirmDelete(null);
+
+      // After deletion, check if the current page will be empty
+      const remainingItems = items.filter((h) => h.id !== horseId);
+      if (remainingItems.length === 0 && page > 1) {
+        fetchPage(page - 1); // go to previous page
+      } else {
+        fetchPage(page); // stay on current page
+      }
+    } catch (err) {
+      console.error("Failed to delete racehorse:", err);
+      alert("Delete failed");
+    }
   };
 
 
@@ -159,6 +165,7 @@ function Racehorses() {
           onSuccess={(updated) => {
             setItems(items.map((h) => (h.id === updated.id ? updated : h)));
             setEditingHorse(null);
+            fetchPage(page);
           }}
         />
       )}

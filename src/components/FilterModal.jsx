@@ -1,5 +1,5 @@
 import React from "react";
-import "../pages/Racehorses.css"
+import "./FilterModal.css"
 
 function FilterModal({ filters, onChange, onApply, onClose }) {
   const handleChange = (e) => {

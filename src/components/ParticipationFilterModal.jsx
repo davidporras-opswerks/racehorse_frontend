@@ -1,5 +1,5 @@
 import React from "react";
-import "../pages/Racehorses.css"; // reuse the modal styles
+import "./FilterModal.css"; // reuse the modal styles
 
 function ParticipationFilterModal({ filters, onChange, onApply, onClose }) {
   const handleChange = (e) => {
@@ -29,7 +29,7 @@ function ParticipationFilterModal({ filters, onChange, onApply, onClose }) {
         />
 
         <label>
-          Position (exact):
+          Position (exact): 
           <input
             type="number"
             name="position"
@@ -40,7 +40,7 @@ function ParticipationFilterModal({ filters, onChange, onApply, onClose }) {
         </label>
 
         <label>
-          Position (min):
+          Position (min): 
           <input
             type="number"
             name="position_min"
@@ -51,7 +51,7 @@ function ParticipationFilterModal({ filters, onChange, onApply, onClose }) {
         </label>
 
         <label>
-          Position (max):
+          Position (max): 
           <input
             type="number"
             name="position_max"
