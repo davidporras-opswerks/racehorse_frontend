@@ -2,19 +2,22 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Modal.css";
 
-function EditUserModal({ user, onClose, onSuccess }) {
-  const { fetchWithAuth, currentUser } = useAuth();
+function EditUserModal({ editUser, onClose, onSuccess }) {
+  const { fetchWithAuth, user } = useAuth();
 
   const [form, setForm] = useState({
-    username: user.username || "",
-    email: user.email || "",
-    is_staff: user.is_staff || false, // included for admins only
+    username: editUser.username || "",
+    email: editUser.email || "",
+    is_staff: editUser.is_staff || false, // included for admins only
+    avatar: null, // new field
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (type === "checkbox") {
       setForm({ ...form, [name]: checked });
+    } else if (type === "file") {
+      setForm({ ...form, [name]: files[0] });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -23,17 +26,25 @@ function EditUserModal({ user, onClose, onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Only include is_staff if current user is admin
-    const payload = { ...form };
-    if (!currentUser?.is_staff) {
-      delete payload.is_staff;
+    const formData = new FormData();
+    formData.append("username", form.username);
+    formData.append("email", form.email);
+
+    if (user?.is_admin) {
+      formData.append("is_staff", form.is_staff ? "true" : "false");
+    }
+
+    if (form.avatar) {
+      formData.append("avatar", form.avatar);
+    }
+    for (let [key, value] of formData.entries()) {
+      console.log("FormData field:", key, value);
     }
 
     try {
-      const updated = await fetchWithAuth(`/users/${user.id}/`, {
+      const updated = await fetchWithAuth(`/users/${editUser.id}/`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: formData,
       });
       onSuccess(updated);
     } catch (err) {
@@ -62,7 +73,14 @@ function EditUserModal({ user, onClose, onSuccess }) {
             required
           />
 
-          {currentUser?.is_staff && (
+          <input
+            type="file"
+            name="avatar"
+            accept="image/*"
+            onChange={handleChange}
+          />
+
+          {user?.is_admin && (
             <label>
               Admin:
               <input

@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import EditUserModal from "../components/EditUserModal";
 import ConfirmModal from "../components/ConfirmModal";
 
-
 function UserProfile() {
   const { id } = useParams();
   const { fetchWithAuth, user } = useAuth();
@@ -36,18 +35,39 @@ function UserProfile() {
   return (
     <div>
       <h2>{profile.get_full_name || profile.username}</h2>
+
+      {/* ✅ Show avatar */}
+      {profile.avatar ? (
+        <img
+          src={profile.avatar}
+          alt={`${profile.username}'s avatar`}
+          style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+        />
+      ) : (
+        <img
+          src="/default-avatar.png" // <-- fallback image from your public folder
+          alt="Default avatar"
+          style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+        />
+      )}
+
       <p><strong>Username:</strong> {profile.username}</p>
       <p><strong>Email:</strong> {profile.email}</p>
       <p><strong>Staff:</strong> {profile.is_staff ? "Yes" : "No"}</p>
       <p><strong>Superuser:</strong> {profile.is_superuser ? "Yes" : "No"}</p>
 
       <button onClick={() => navigate(-1)}>⬅ Back</button>
-      {(user && (user.is_admin || Number(user.user_id) === profile.id)) && <button onClick={() => setShowEdit(true)}>✏️ Edit</button>}
-      {(user && user.is_admin) && <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
-      
+
+      {(user && (user.is_admin || Number(user.user_id) === profile.id)) && (
+        <button onClick={() => setShowEdit(true)}>✏️ Edit</button>
+      )}
+      {(user && user.is_admin) && (
+        <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>
+      )}
+
       {showEdit && (
         <EditUserModal
-          user={profile}
+          editUser={profile}
           onClose={() => setShowEdit(false)}
           onSuccess={(updated) => {
             setProfile(updated);

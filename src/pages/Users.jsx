@@ -91,7 +91,7 @@ function Users() {
 
       {editingUser && (
         <EditUserModal
-          user={editingUser}
+          editUser={editingUser}
           onClose={() => setEditingUser(null)}
           onSuccess={(updated) => {
             setItems(items.map((u) => (u.id === updated.id ? updated : u)));
