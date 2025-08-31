@@ -69,10 +69,16 @@ function AddParticipationModal({ onClose, onSuccess }) {
       setMessage("❌ Error: " + JSON.stringify(err));
     }
   };
+  const handleOverlayClick = (e) => {
+    // Close only if you click directly on the overlay, not inside the modal box
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-box">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Add Participation</h2>
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>
@@ -86,7 +92,7 @@ function AddParticipationModal({ onClose, onSuccess }) {
             <option value="">-- Select Race --</option>
             {existingRaces.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.name}
+                {r.name} || {r.date} ({r.season})
               </option>
             ))}
           </select>

@@ -123,8 +123,8 @@ function Racehorses() {
                 </Link>
                 {user && (
                   <>
-                    <button onClick={() => setEditingHorse(horse)}>✏️ Edit</button>
-                    <button onClick={() => setConfirmDelete(horse)}>🗑️ Delete</button>
+                    <button onClick={() => setEditingHorse(horse)}>Edit</button>
+                    <button onClick={() => setConfirmDelete(horse)}>Delete</button>
                   </>
                 )}
               </div>
@@ -135,13 +135,13 @@ function Racehorses() {
 
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
-          ⬅️ Previous
+          Previous
         </button>
         <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
-          Next ➡️
+          Next
         </button>
       </div>
 

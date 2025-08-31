@@ -1,0 +1,111 @@
+.participation-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.participation-card {
+  background: var(--bg);
+  color: var(--text);
+  max-width: 600px;
+  width: 100%;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: background 0.3s, color 0.3s;
+}
+
+.participation-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--text);
+}
+
+.participation-image {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.participation-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  object-fit: cover;
+}
+
+.participation-info p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.participation-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+/* Status badge for participation */
+.status {
+  font-weight: 600;
+  color: var(--text); /* same as other text */
+  padding: 0;
+  margin-left: 0.3rem;
+}
+
+/* Status color mapping */
+.status.winner {
+  background: #16a34a; /* green */
+}
+
+.status.runner-up {
+  background: #f59e0b; /* amber */
+}
+
+.status.third-place {
+  background: #f97316; /* orange */
+}
+
+.status.default {
+  background: #2563eb; /* blue */
+}
+
+/* Buttons */
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn.back {
+  background: #6b7280;
+  color: white;
+}
+
+.btn.back:hover {
+  background: #4b5563;
+}
+
+.btn.edit {
+  background: #2563eb;
+  color: white;
+}
+
+.btn.edit:hover {
+  background: #1d4ed8;
+}
+
+.btn.delete {
+  background: #dc2626;
+  color: white;
+}
+
+.btn.delete:hover {
+  background: #b91c1c;
+}

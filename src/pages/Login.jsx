@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import "./Register.css"; // reuse same CSS
 
 function Login() {
   const { login } = useAuth();
@@ -18,18 +19,22 @@ function Login() {
       await login(username, password);
       navigate("/racehorses"); // redirect after login
     } catch (err) {
-      setError("Invalid username or password");
+      setError("❌ Invalid username or password");
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Login</h2>
-      <input name="username" placeholder="Username" required />
-      <input name="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </form>
+    <div className="register-page">
+      <div className="form-container">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input name="username" type="text" placeholder="Username" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+        {error && <p className="error-message">{error}</p>}
+      </div>
+    </div>
   );
 }
 

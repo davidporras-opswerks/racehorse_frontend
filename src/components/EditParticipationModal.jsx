@@ -21,9 +21,17 @@ function EditParticipationModal({ participation, onClose, onSuccess }) {
 
   useEffect(() => {
     // fetch existing entities for dropdowns
-    fetchWithAuth("/races/").then((data) => setRaces(data.results || [])).catch(console.error);
-    fetchWithAuth("/racehorses/").then((data) => setRacehorses(data.results || [])).catch(console.error);
-    fetchWithAuth("/jockeys/").then((data) => setJockeys(data.results || [])).catch(console.error);
+    fetchWithAuth("/races/")
+      .then((data) => setRaces(data.results || []))
+      .catch(console.error);
+
+    fetchWithAuth("/racehorses/")
+      .then((data) => setRacehorses(data.results || []))
+      .catch(console.error);
+
+    fetchWithAuth("/jockeys/")
+      .then((data) => setJockeys(data.results || []))
+      .catch(console.error);
   }, [fetchWithAuth]);
 
   const handleChange = (e) => {
@@ -45,9 +53,15 @@ function EditParticipationModal({ participation, onClose, onSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Participation</h2>
         <form onSubmit={handleSubmit}>
           {/* Racehorse select */}
@@ -129,8 +143,14 @@ function EditParticipationModal({ participation, onClose, onSuccess }) {
           />
 
           <div className="modal-actions">
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>
+            <button type="submit" className="modal-button submit">
+              Save
+            </button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
               Cancel
             </button>
           </div>

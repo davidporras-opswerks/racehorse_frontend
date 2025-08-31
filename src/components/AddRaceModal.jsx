@@ -25,6 +25,13 @@ function AddRaceModal({ onClose, onSuccess }) {
     }));
   };
 
+  const handleOverlayClick = (e) => {
+    // Close only if you click directly on the overlay, not inside the modal box
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("access");
@@ -85,8 +92,8 @@ function AddRaceModal({ onClose, onSuccess }) {
   ];
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-box">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Add Race</h2>
         {message && <p>{message}</p>}
         <form onSubmit={handleSubmit}>

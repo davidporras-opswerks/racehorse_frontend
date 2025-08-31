@@ -1,0 +1,119 @@
+/* Register.css */
+
+/* Page background depending on theme */
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 91.92vh;
+  height: 93.3vh; /* ensure full viewport height */
+  background-image: url('../assets/background-light.png'); /* default light */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 2rem;
+  box-sizing: border-box;
+  overflow: hidden; /* prevent scrolling */
+  transition: background-image 0.3s ease-in-out;
+}
+
+/* Dark mode background */
+body.dark .register-page {
+  background-image: url('../assets/background-dark.jpg'); /* dark mode image */
+}
+
+.form-container {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: background 0.3s ease, color 0.3s ease;
+  box-sizing: border-box;
+}
+
+/* Dark mode form */
+body.dark .form-container {
+  background: rgba(18, 18, 18, 0.95);
+  color: var(--text);
+}
+
+.form-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container input[type="file"] {
+  width: 90%; /* inputs narrower than container */
+  max-width: 360px; /* optional max width */
+  padding: 0.8rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* Dark mode input */
+body.dark .form-container input[type="text"],
+body.dark .form-container input[type="email"],
+body.dark .form-container input[type="password"],
+body.dark .form-container input[type="file"] {
+  border: 1px solid #555;
+  background: #222;
+  color: #fff;
+}
+
+.form-container input:focus {
+  border-color: var(--link-color);
+  outline: none;
+}
+
+.form-container button {
+  width: 90%; /* match inputs */
+  max-width: 360px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: var(--link-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-container button:hover {
+  background-color: #1a73e8; /* slightly darker on hover */
+}
+
+.form-container p {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+/* Login specific adjustments */
+.error-message {
+  color: #e74c3c;
+  margin-top: 1rem;
+  font-weight: 500;
+}
+
+/* Optionally reduce form spacing for login */
+.register-page .form-container h2 {
+  margin-bottom: 1.2rem;
+}
+
+.register-page .form-container input,
+.register-page .form-container button {
+  width: 90%;
+  max-width: 360px;
+  margin-bottom: 0.8rem;
+}

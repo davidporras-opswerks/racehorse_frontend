@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Modal.css";
+import defaultHorse from "../assets/default-horse.webp"
 
 function EditRacehorseModal({ horse, onClose, onSuccess }) {
   const { fetchWithAuth } = useAuth();
@@ -15,10 +16,14 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
     is_active: horse.is_active ?? true,
   });
 
+  const [imagePreview, setImagePreview] = useState(horse.image || null);
+  let fileInputRef;
+
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    if (type === "file") {
+    if (type === "file" && files[0]) {
       setForm({ ...form, image: files[0] });
+      setImagePreview(URL.createObjectURL(files[0]));
     } else if (type === "checkbox") {
       setForm({ ...form, [name]: checked });
     } else {
@@ -32,7 +37,6 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
     let body;
     let headers = {};
     if (form.image instanceof File) {
-      // multipart if uploading a new image
       body = new FormData();
       for (const key in form) {
         if (form[key] !== null && form[key] !== "") {
@@ -40,11 +44,8 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
         }
       }
     } else {
-      // JSON if no new image uploaded
       const jsonForm = { ...form };
-      // ❌ Don't send image URL back
       delete jsonForm.image;
-      
       body = JSON.stringify(jsonForm);
       headers["Content-Type"] = "application/json";
     }
@@ -61,13 +62,44 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Racehorse</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          {/* Image preview at the top */}
+          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+            <img
+              src={imagePreview || defaultHorse}
+              alt="Racehorse Preview"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                cursor: "pointer",
+              }}
+              onClick={() => fileInputRef.click()}
+            />
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              style={{ display: "none" }}
+              ref={(ref) => (fileInputRef = ref)}
+              onChange={handleChange}
+            />
+          </div>
+
           <input
             name="name"
+            type="text"
             placeholder="Name"
             value={form.name}
             onChange={handleChange}
@@ -81,6 +113,7 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
           />
           <input
             name="breed"
+            type="text"
             placeholder="Breed"
             value={form.breed}
             onChange={handleChange}
@@ -98,11 +131,11 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
           </select>
           <input
             name="country"
+            type="text"
             placeholder="Country"
             value={form.country}
             onChange={handleChange}
           />
-          <input type="file" name="image" onChange={handleChange} />
 
           <label>
             <input
@@ -114,17 +147,15 @@ function EditRacehorseModal({ horse, onClose, onSuccess }) {
             Active
           </label>
 
-          {/* Read-only computed stats */}
-          <div className="racehorse-stats">
-            <p><strong>Age:</strong> {horse.age ?? "N/A"}</p>
-            <p><strong>Total Races:</strong> {horse.total_races ?? 0}</p>
-            <p><strong>Total Wins:</strong> {horse.total_wins ?? 0}</p>
-            <p><strong>Win Rate:</strong> {horse.win_rate?.toFixed(2) ?? "0.00"}%</p>
-          </div>
-
           <div className="modal-actions">
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>
+            <button type="submit" className="modal-button submit">
+              Save
+            </button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
               Cancel
             </button>
           </div>

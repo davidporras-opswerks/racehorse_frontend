@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditParticipationModal from "../components/EditParticipationModal";
 import ConfirmModal from "../components/ConfirmModal";
+import "./ParticipationDetail.css"
+import defaultHorse from "../assets/default-horse.webp";
 
 function ParticipationDetail() {
   const { id } = useParams();
@@ -32,21 +34,34 @@ function ParticipationDetail() {
   if (!participation) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h2>Participation Details</h2>
-      <p><strong>Racehorse:</strong> {participation.racehorse_name}</p>
-      <p><strong>Race:</strong> {participation.race_name}</p>
-      <p><strong>Jockey:</strong> {participation.jockey_name}</p>
-      <p><strong>Position:</strong> {participation.position}</p>
-      <p><strong>Status:</strong> {participation.result_status}</p>
-      <p><strong>Winner:</strong> {participation.is_winner ? "✅ Yes" : "❌ No"}</p>
-      <p><strong>Finish Time:</strong> {participation.finish_time || "N/A"}</p>
-      <p><strong>Margin:</strong> {participation.margin || "N/A"}</p>
-      <p><strong>Odds:</strong> {participation.odds || "N/A"}</p>
+    <div className="participation-page">
+      <div className="participation-card">
+        <h2 className="participation-title">Participation Details</h2>
 
-      <button onClick={() => navigate(-1)}>⬅ Back</button>
-      {user && <button onClick={() => setShowEdit(true)}>✏️ Edit</button>}
-      {user && <button onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+        <div className="entity-image">
+          <img src={participation.racehorse_image || defaultHorse} alt={participation.racehorse_name} />
+        </div>
+
+        <div className="participation-info">
+          <p><strong>Racehorse:</strong> {participation.racehorse_name}</p>
+          <p><strong>Race:</strong> {participation.race_name}</p>
+          <p><strong>Jockey:</strong> {participation.jockey_name}</p>
+          <p><strong>Position:</strong> {participation.position}</p>
+          <p>
+            <strong>Status:</strong> {participation.result_status || "N/A"}
+          </p>
+          <p><strong>Winner:</strong> {participation.is_winner ? "✅ Yes" : "❌ No"}</p>
+          <p><strong>Finish Time:</strong> {participation.finish_time || "N/A"}</p>
+          <p><strong>Margin:</strong> {participation.margin || "N/A"}</p>
+          <p><strong>Odds:</strong> {participation.odds || "N/A"}</p>
+        </div>
+
+        <div className="participation-actions">
+          <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
+          {user && <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>}
+          {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+        </div>
+      </div>
 
       {showEdit && (
         <EditParticipationModal

@@ -175,9 +175,9 @@ function Participations() {
                     {user && (
                       <>
                         <button onClick={() => setEditingParticipation(p)}>
-                          ✏️ Edit
+                          Edit
                         </button>
-                        <button onClick={() => setConfirmDelete(p)}>🗑️ Delete</button>
+                        <button onClick={() => setConfirmDelete(p)}>Delete</button>
                       </>
                     )}
                   </div>
@@ -191,13 +191,13 @@ function Participations() {
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
-          ⬅️ Previous
+          Previous
         </button>
         <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
-          Next ➡️
+          Next
         </button>
       </div>
 

@@ -38,6 +38,12 @@ function EditRaceModal({ race, onClose, onSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   // backend choices
   const trackConfigurations = [
     { value: "left_handed", label: "Left Handed" },
@@ -75,8 +81,8 @@ function EditRaceModal({ race, onClose, onSuccess }) {
   ];
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Race</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -185,8 +191,12 @@ function EditRaceModal({ race, onClose, onSuccess }) {
           />
 
           <div className="modal-actions">
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>
+            <button type="submit" className="modal-button submit">Save</button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
               Cancel
             </button>
           </div>

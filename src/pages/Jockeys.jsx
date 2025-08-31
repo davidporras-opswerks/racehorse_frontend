@@ -111,8 +111,8 @@ function Jockeys() {
                 </Link>
                 {user && (
                   <>
-                    <button onClick={() => setEditingJockey(jockey)}>✏️ Edit</button>
-                    <button onClick={() => setConfirmDelete(jockey)}>🗑️ Delete</button>
+                    <button onClick={() => setEditingJockey(jockey)}>Edit</button>
+                    <button onClick={() => setConfirmDelete(jockey)}>Delete</button>
                   </>
                 )}
               </div>
@@ -124,13 +124,13 @@ function Jockeys() {
       {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
-          ⬅️ Previous
+          ⬅Previous
         </button>
         <span>
           Page {page} of {Math.ceil(count / pageSize)}
         </span>
         <button disabled={!next} onClick={() => fetchPage(page + 1)}>
-          Next ➡️
+          Next
         </button>
       </div>
 

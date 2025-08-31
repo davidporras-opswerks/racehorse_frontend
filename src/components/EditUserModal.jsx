@@ -8,18 +8,17 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
   const [form, setForm] = useState({
     username: editUser.username || "",
     email: editUser.email || "",
-    is_staff: editUser.is_staff || false, // included for admins only
-    avatar: null, // new field
+    is_staff: editUser.is_staff || false,
+    avatar: null,
   });
 
+  const [avatarPreview, setAvatarPreview] = useState(editUser.avatar || null);
+
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === "checkbox") {
-      setForm({ ...form, [name]: checked });
-    } else if (type === "file") {
-      setForm({ ...form, [name]: files[0] });
-    } else {
-      setForm({ ...form, [name]: value });
+    const file = e.target.files[0];
+    if (file) {
+      setForm({ ...form, avatar: file });
+      setAvatarPreview(URL.createObjectURL(file));
     }
   };
 
@@ -37,9 +36,6 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
     if (form.avatar) {
       formData.append("avatar", form.avatar);
     }
-    for (let [key, value] of formData.entries()) {
-      console.log("FormData field:", key, value);
-    }
 
     try {
       const updated = await fetchWithAuth(`/users/${editUser.id}/`, {
@@ -52,16 +48,47 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) onClose();
+  };
+
+  let fileInputRef;
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Account</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="modal-form">
+          {/* Avatar preview clickable */}
+          <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+            <img
+              src={avatarPreview || "/default-avatar.png"}
+              alt="Avatar Preview"
+              style={{
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                cursor: "pointer",
+              }}
+              onClick={() => fileInputRef.click()}
+            />
+            <input
+              type="file"
+              name="avatar"
+              accept="image/*"
+              style={{ display: "none" }}
+              ref={(ref) => (fileInputRef = ref)}
+              onChange={handleChange}
+            />
+          </div>
+
           <input
             name="username"
+            type="text"
             placeholder="Username"
             value={form.username}
-            onChange={handleChange}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
             required
           />
           <input
@@ -69,32 +96,36 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
             type="email"
             placeholder="Email"
             value={form.email}
-            onChange={handleChange}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
             required
           />
 
-          <input
-            type="file"
-            name="avatar"
-            accept="image/*"
-            onChange={handleChange}
-          />
-
+          {/* Admin checkbox */}
           {user?.is_admin && (
-            <label>
-              Admin:
+            <label className="checkbox-label">
               <input
                 type="checkbox"
                 name="is_staff"
                 checked={form.is_staff}
-                onChange={handleChange}
+                onChange={(e) =>
+                  setForm({ ...form, is_staff: e.target.checked })
+                }
               />
+              Admin
             </label>
           )}
 
           <div className="modal-actions">
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>Cancel</button>
+            <button type="submit" className="modal-button submit">
+              Save
+            </button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>

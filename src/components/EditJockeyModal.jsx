@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Modal.css";
+import defaultJockey from "../assets/default-jockey.webp"
 
 function EditJockeyModal({ jockey, onClose, onSuccess }) {
   const { fetchWithAuth } = useAuth();
@@ -10,13 +11,17 @@ function EditJockeyModal({ jockey, onClose, onSuccess }) {
     image: jockey.image || null,
     height_cm: jockey.height_cm || "",
     weight_kg: jockey.weight_kg || "",
-    birth_date: jockey.birth_date || null,
+    birth_date: jockey.birth_date || "",
   });
+
+  const [imagePreview, setImagePreview] = useState(jockey.image || null);
+  let fileInputRef;
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    if (type === "file") {
+    if (type === "file" && files[0]) {
       setForm({ ...form, image: files[0] });
+      setImagePreview(URL.createObjectURL(files[0]));
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -28,7 +33,6 @@ function EditJockeyModal({ jockey, onClose, onSuccess }) {
     let body;
     let headers = {};
     if (form.image instanceof File) {
-      // multipart if uploading a new image
       body = new FormData();
       for (const key in form) {
         if (form[key] !== null && form[key] !== "") {
@@ -36,8 +40,9 @@ function EditJockeyModal({ jockey, onClose, onSuccess }) {
         }
       }
     } else {
-      // JSON if no new image uploaded
-      body = JSON.stringify(form);
+      const jsonForm = { ...form };
+      delete jsonForm.image;
+      body = JSON.stringify(jsonForm);
       headers["Content-Type"] = "application/json";
     }
 
@@ -53,13 +58,44 @@ function EditJockeyModal({ jockey, onClose, onSuccess }) {
     }
   };
 
+  const handleOverlayClick = (e) => {
+    if (e.target.classList.contains("modal-overlay")) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={handleOverlayClick}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <h2>Edit Jockey</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          {/* Image preview at the top */}
+          <div style={{ textAlign: "center", marginBottom: "1rem" }}>
+            <img
+              src={imagePreview || defaultJockey}
+              alt="Jockey Preview"
+              style={{
+                width: "120px",
+                height: "120px",
+                borderRadius: "50%",
+                objectFit: "cover",
+                cursor: "pointer",
+              }}
+              onClick={() => fileInputRef.click()}
+            />
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              style={{ display: "none" }}
+              ref={(ref) => (fileInputRef = ref)}
+              onChange={handleChange}
+            />
+          </div>
+
           <input
             name="name"
+            type="text"
             placeholder="Name"
             value={form.name}
             onChange={handleChange}
@@ -82,14 +118,19 @@ function EditJockeyModal({ jockey, onClose, onSuccess }) {
           <input
             type="date"
             name="birth_date"
-            value={form.birth_date}
+            value={form.birth_date || ""}
             onChange={handleChange}
           />
-          <input type="file" name="image" onChange={handleChange} />
 
           <div className="modal-actions">
-            <button type="submit">Save</button>
-            <button type="button" onClick={onClose}>
+            <button type="submit" className="modal-button submit">
+              Save
+            </button>
+            <button
+              type="button"
+              className="modal-button cancel"
+              onClick={onClose}
+            >
               Cancel
             </button>
           </div>

@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(90deg, #1e3a8a, #1e40af); /* racing blue gradient */
+  background: linear-gradient(90deg, #ffbc14, #c0cfff); /* racing blue gradient */
   padding: 12px 24px;
   color: var(--text);
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
@@ -18,13 +18,13 @@
 }
 
 .navbar-brand {
-  color: white;
+  color: var(--text); /* ✅ use theme text color */
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 22px;
-  transition: transform 0.2s;
+  transition: transform 0.2s, color 0.2s;
 }
 
 .navbar-brand:hover {
@@ -38,7 +38,7 @@
 }
 
 .navbar-link {
-  color: white;
+  color: var(--text); /* ✅ use theme text color */
   text-decoration: none;
   padding: 6px 10px;
   border-radius: 6px;
@@ -47,8 +47,8 @@
 }
 
 .navbar-link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #facc15; /* golden highlight for hover */
+  background: rgba(178, 166, 220, 0.15);
+  color: #e80008; /* highlight on hover */
 }
 
 .navbar-button {
@@ -70,4 +70,9 @@
 /* Dark theme override */
 body.dark .navbar {
   background: linear-gradient(90deg, #111827, #1f2937); /* darker gradient */
+}
+
+body.dark .navbar-brand,
+body.dark .navbar-link {
+  color: var(--text); /* ✅ ensures light text on dark mode */
 }

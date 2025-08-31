@@ -1,0 +1,87 @@
+/* UserProfile.css */
+
+.user-profile-page {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.user-profile-card {
+  background: var(--bg);
+  color: var(--text);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.user-profile-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.user-profile-card img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid var(--link-color);
+}
+
+.user-profile-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.user-profile-info p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.user-profile-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.user-profile-actions .btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.user-profile-actions .btn.back {
+  background: #6b7280;
+  color: white;
+}
+
+.user-profile-actions .btn.back:hover {
+  background: #4b5563;
+}
+
+.user-profile-actions .btn.edit {
+  background: #2563eb;
+  color: white;
+}
+
+.user-profile-actions .btn.edit:hover {
+  background: #1d4ed8;
+}
+
+.user-profile-actions .btn.delete {
+  background: #dc2626;
+  color: white;
+}
+
+.user-profile-actions .btn.delete:hover {
+  background: #b91c1c;
+}
