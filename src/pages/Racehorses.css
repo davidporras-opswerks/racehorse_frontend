@@ -36,7 +36,7 @@
   background: var(--link-color);
   border: none;
   padding: 0.5rem 1rem;
-  color: white;
+  color: var(--text);
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
@@ -102,7 +102,7 @@
 .card-actions button {
   flex: 1;
   background: var(--link-color);
-  color: white;
+  color: var(--text);
   border: none;
   border-radius: 6px;
   padding: 0.4rem;
@@ -116,11 +116,11 @@
 }
 
 .card-actions button:last-child {
-  background: #dc2626;
+  background: #0088b2;
 }
 
 .card-actions button:last-child:hover {
-  background: #b91c1c;
+  background: #00b2e8;
 }
 
 .pagination {
@@ -138,7 +138,7 @@
   border-radius: 8px;
   border: 1px solid var(--link-color);
   background: var(--bg);
-  color: var(--link-color);
+  color: var(--second-color);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-weight: 500;
@@ -146,7 +146,7 @@
 
 .pagination button:hover:not(:disabled) {
   background: var(--link-color);
-  color: white;
+  color: var(--text);
 }
 
 .pagination button:disabled {

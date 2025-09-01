@@ -6,11 +6,9 @@
   justify-content: center;
   align-items: center;
   min-height: 91.92vh;
-  height: 93.3vh; /* ensure full viewport height */
-  background-image: url('../assets/background-light.png'); /* default light */
+  height: 93.1vh; /* ensure full viewport height */
+  background: url('../assets/background-light.png') no-repeat center center fixed; /* default light */
   background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   padding: 2rem;
   box-sizing: border-box;
   overflow: hidden; /* prevent scrolling */

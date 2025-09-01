@@ -23,6 +23,7 @@ function App() {
 
       <Routes>
         <Route path="/login" element={!user ? <Login /> : <Navigate to="/racehorses" />} />
+        <Route path="/" element={<Navigate to="/racehorses" />} />
         <Route path="/racehorses" element={<Racehorses />} />
         <Route path="/racehorses/:id" element={<RacehorseDetail />} />
         <Route path="/jockeys" element={<Jockeys />} />

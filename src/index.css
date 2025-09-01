@@ -2,20 +2,25 @@
 
 /* default = light */
 :root {
-  --bg: #ffffff;
+  --bg-image:url('./assets/horse-bg-light.jpg');
+  --bg: rgba(255, 255, 255, 0.95);
   --text: #000000;
-  --link-color: #007bff;
+  --link-color: #00ffbb;
+  --second-color: #212b00;
 }
 
 body.dark {
-  --bg: #121212;
+  --bg-image:url('./assets/horse-bg-dark.png');
+  --bg: rgba(18, 18, 18, 0.95);
   --text: #ffffff;
-  --link-color: #61dafb;
+  --link-color: #00303d;
+  --second-color: #abe000;
 }
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--bg-image) no-repeat center center fixed;
+  background-size: cover;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

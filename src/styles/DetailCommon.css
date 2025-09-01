@@ -1,8 +1,13 @@
 .detail-card {
   background: var(--bg);
   color: var(--text);
-  max-width: 600px;
-  width: 100%;
+
+  /* remove the fixed max width */
+  /* max-width: 600px; */
+  /* width: 100%; */
+
+  display: inline-block;       /* shrink to fit content */
+  min-width: 300px;            /* optional: prevent it from getting too small */
   padding: 2rem;
   border-radius: 16px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);

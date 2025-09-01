@@ -19,7 +19,7 @@
   background: linear-gradient(135deg, var(--link-color), #1d4ed8);
   border: none;
   padding: 0.75rem 1.5rem;
-  color: white;
+  color: var(--text);
   border-radius: 9999px; /* pill */
   cursor: pointer;
   font-size: 1rem;
@@ -142,7 +142,7 @@ body.dark .user-card {
   border-radius: 8px;
   border: 1px solid var(--link-color);
   background: var(--bg);
-  color: var(--link-color);
+  color: var(--second-color);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   font-weight: 500;
