@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditRaceModal from "../components/EditRaceModal";
@@ -50,11 +50,15 @@ function RaceDetail() {
   };
   const SEASONS = { SP: "Spring", SU: "Summer", FA: "Fall", WI: "Winter" };
 
-  useEffect(() => {
+  const fetchRace = useCallback(() => {
     fetchWithAuth(`/races/${id}/`)
       .then((data) => setRace(data))
       .catch((err) => console.error(err));
-  }, [id, fetchWithAuth]);
+  }, [fetchWithAuth, id]);
+
+  useEffect(() => {
+    fetchRace();
+  }, [fetchRace]);
 
   const handleDelete = () => {
     fetchWithAuth(`/races/${id}/`, { method: "DELETE" })
@@ -162,10 +166,7 @@ function RaceDetail() {
           defaultRaceId={race.id} // <-- pre-select this race
           onClose={() => setShowAddParticipation(false)}
           onSuccess={(newParticipation) => {
-            setRace((prev) => ({
-              ...prev,
-              participations: [...(prev.participations || []), newParticipation],
-            }));
+            fetchRace();
             setShowAddParticipation(false);
           }}
         />

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditRacehorseModal from "../components/EditRacehorseModal";
@@ -17,11 +17,15 @@ function RacehorseDetail() {
   const [showAddParticipation, setShowAddParticipation] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchHorse = useCallback(() => {
     fetchWithAuth(`/racehorses/${id}/`)
       .then((data) => setHorse(data))
       .catch((err) => console.error(err));
-  }, [id, fetchWithAuth]);
+  }, [fetchWithAuth, id]);
+
+  useEffect(() => {
+    fetchHorse();
+  }, [fetchHorse]);
 
   const handleDelete = () => {
     fetchWithAuth(`/racehorses/${id}/`, { method: "DELETE" })
@@ -130,11 +134,8 @@ function RacehorseDetail() {
         <AddParticipationModal
           defaultRacehorseId={horse.id}
           onClose={() => setShowAddParticipation(false)}
-          onSuccess={(newParticipation) => {
-            setHorse((prev) => ({
-              ...prev,
-              participations: [...(prev.participations || []), newParticipation],
-            }));
+          onSuccess={() => {
+            fetchHorse(); // 🔄 re-fetch whole racehorse detail
             setShowAddParticipation(false);
           }}
         />

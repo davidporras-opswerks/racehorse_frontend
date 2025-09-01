@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditJockeyModal from "../components/EditJockeyModal";
@@ -17,11 +17,15 @@ function JockeyDetail() {
   const [showAddParticipation, setShowAddParticipation] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchJockey = useCallback(() => {
     fetchWithAuth(`/jockeys/${id}/`)
       .then((data) => setJockey(data))
       .catch((err) => console.error(err));
-  }, [id, fetchWithAuth]);
+  }, [fetchWithAuth, id]);
+
+  useEffect(() => {
+    fetchJockey();
+  }, [fetchJockey]);
 
   const handleDelete = () => {
     fetchWithAuth(`/jockeys/${id}/`, { method: "DELETE" })
@@ -161,10 +165,7 @@ function JockeyDetail() {
           defaultJockeyId={jockey.id} // <-- pre-select this jockey
           onClose={() => setShowAddParticipation(false)}
           onSuccess={(newParticipation) => {
-            setJockey((prev) => ({
-              ...prev,
-              participations: [...(prev.participations || []), newParticipation],
-            }));
+            fetchJockey(); // 🔄 re-fetch whole racehorse detail
             setShowAddParticipation(false);
           }}
         />

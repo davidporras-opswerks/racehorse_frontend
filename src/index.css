@@ -2,7 +2,7 @@
 
 /* default = light */
 :root {
-  --bg-image:url('./assets/horse-bg-light.jpg');
+  --bg-image: url('./assets/background-light.png');
   --bg: rgba(255, 255, 255, 0.95);
   --text: #000000;
   --link-color: #00ffbb;
@@ -10,7 +10,7 @@
 }
 
 body.dark {
-  --bg-image:url('./assets/horse-bg-dark.png');
+  --bg-image: url('./assets/background-dark.jpg');
   --bg: rgba(18, 18, 18, 0.95);
   --text: #ffffff;
   --link-color: #00303d;
@@ -21,6 +21,7 @@ body {
   margin: 0;
   background: var(--bg-image) no-repeat center center fixed;
   background-size: cover;
+  transition: background 0.3s ease, color 0.3s ease;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
