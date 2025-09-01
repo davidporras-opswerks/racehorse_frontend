@@ -5,7 +5,7 @@ import ThemeToggle from "./ThemeToggle";
 import horseshoeLight from "../assets/horseshoe-light.png";
 import horseshoeDark from "../assets/horseshoe-dark.png";
 import { useTheme } from "../context/ThemeProvider";
-import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
+import defaultAvatar from "../assets/default-avatar.webp";
 
 function Navbar() {
   const { user, logout: logoutOriginal } = useAuth();
