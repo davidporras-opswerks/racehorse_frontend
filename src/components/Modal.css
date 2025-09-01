@@ -155,6 +155,7 @@ body.dark .modal-button.cancel:hover {
 
 .modal-form input[type="text"],
 .modal-form input[type="email"],
+.modal-form input[type="password"],
 .modal-form input[type="file"] {
   padding: 0.5rem;
   border-radius: 6px;

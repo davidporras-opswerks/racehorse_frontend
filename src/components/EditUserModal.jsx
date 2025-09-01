@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import "./Modal.css";
+import defaultAvatar from "../assets/default-avatar.webp";
 
 function EditUserModal({ editUser, onClose, onSuccess }) {
   const { fetchWithAuth, user } = useAuth();
@@ -12,7 +13,12 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
     avatar: null,
   });
 
-  const [avatarPreview, setAvatarPreview] = useState(editUser.avatar || null);
+  const [avatarPreview, setAvatarPreview] = useState(editUser.avatar || defaultAvatar);
+
+  // Password states (only new password now)
+  const [newPassword1, setNewPassword1] = useState("");
+  const [newPassword2, setNewPassword2] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const file = e.target.files[0];
@@ -24,6 +30,15 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    // Check password match if provided
+    if (newPassword1 || newPassword2) {
+      if (newPassword1 !== newPassword2) {
+        setError("New passwords do not match.");
+        return;
+      }
+    }
 
     const formData = new FormData();
     formData.append("username", form.username);
@@ -37,14 +52,20 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
       formData.append("avatar", form.avatar);
     }
 
+    // If password is being changed
+    if (newPassword1) {
+      formData.append("password", newPassword1);
+    }
+
     try {
       const updated = await fetchWithAuth(`/users/${editUser.id}/`, {
-        method: "PATCH",
+        method: "PUT",
         body: formData,
       });
       onSuccess(updated);
     } catch (err) {
       console.error("Update failed", err);
+      setError("Update failed. Please try again.");
     }
   };
 
@@ -114,6 +135,23 @@ function EditUserModal({ editUser, onClose, onSuccess }) {
               Admin
             </label>
           )}
+
+          {/* Password section */}
+          <h3 style={{ marginTop: "1rem" }}>Change Password</h3>
+          <input
+            type="password"
+            placeholder="New Password"
+            value={newPassword1}
+            onChange={(e) => setNewPassword1(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm New Password"
+            value={newPassword2}
+            onChange={(e) => setNewPassword2(e.target.value)}
+          />
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
           <div className="modal-actions">
             <button type="submit" className="modal-button submit">
