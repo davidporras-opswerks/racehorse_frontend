@@ -121,30 +121,37 @@ function Racehorses() {
 
       <div className="racehorse-grid">
         {items.map((horse) => (
-          <div key={horse.id} className="racehorse-card">
-            <img
-              src={horse.image || defaultHorse}
-              alt={horse.name}
-              className="racehorse-image"
-            />
-            <div className="racehorse-info">
-              <h3>{horse.name}</h3>
-              <p><strong>Breed:</strong> {horse.breed || "Unknown"}</p>
-              <p><strong>Country:</strong> {horse.country || "Unknown"}</p>
-              <p><strong>Wins:</strong> {horse.total_wins} / {horse.total_races}</p>
-              <p><strong>Win Rate:</strong> {horse.win_rate}%</p>
-              <div className="card-actions">
-                <Link to={`/racehorses/${horse.id}`}>
-                  <button>View</button>
-                </Link>
-                {user && (
-                  <>
-                    <button onClick={() => setEditingHorse(horse)}>Edit</button>
-                    <button onClick={() => setConfirmDelete(horse)}>Delete</button>
-                  </>
-                )}
+          <div
+            key={horse.id}
+            className="racehorse-card"
+          >
+            {/* Wrap clickable part in Link */}
+            <Link
+              to={`/racehorses/${horse.id}`}
+              className="card-link"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <img
+                src={horse.image || defaultHorse}
+                alt={horse.name}
+                className="racehorse-image"
+              />
+              <div className="racehorse-info">
+                <h3>{horse.name}</h3>
+                <p><strong>Breed:</strong> {horse.breed || "Unknown"}</p>
+                <p><strong>Country:</strong> {horse.country || "Unknown"}</p>
+                <p><strong>Wins:</strong> {horse.total_wins} / {horse.total_races}</p>
+                <p><strong>Win Rate:</strong> {horse.win_rate}%</p>
               </div>
-            </div>
+            </Link>
+
+            {/* Keep actions separate so they don’t trigger the link */}
+            {user && (
+              <div className="card-actions">
+                <button onClick={() => setEditingHorse(horse)}>Edit</button>
+                <button onClick={() => setConfirmDelete(horse)}>Delete</button>
+              </div>
+            )}
           </div>
         ))}
       </div>

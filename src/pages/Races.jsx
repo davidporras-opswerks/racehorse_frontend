@@ -134,44 +134,48 @@ function Races() {
       <div className="racehorse-grid">
         {items.map((race) => (
           <div key={race.id} className="racehorse-card">
-            <div className="racehorse-info">
-              <h3>{race.name}</h3>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(race.date).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Location:</strong> {race.location}
-              </p>
-              <p>
-                <strong>Classification:</strong> {race.classification} |{" "}
-                <strong>Surface:</strong> {race.track_surface}
-              </p>
-              <p>
-                <strong>Length:</strong> {race.track_length}m
-              </p>
-              <p>
-                <strong>Winner:</strong> {race.winner || "N/A"}
-              </p>
-              <p>
-                <strong>Participants:</strong> {race.total_participants}
-              </p>
-
-              <div className="card-actions">
-                <Link to={`/races/${race.id}`}>
-                  <button>View</button>
-                </Link>
-                {user && (
-                  <>
-                    <button onClick={() => setEditingRace(race)}>Edit</button>
-                    <button onClick={() => setConfirmDelete(race)}>Delete</button>
-                  </>
-                )}
+            {/* Clickable area */}
+            <Link
+              to={`/races/${race.id}`}
+              className="card-link"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <div className="racehorse-info">
+                <h3>{race.name}</h3>
+                <p>
+                  <strong>Date:</strong>{" "}
+                  {new Date(race.date).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Location:</strong> {race.location}
+                </p>
+                <p>
+                  <strong>Classification:</strong> {race.classification} |{" "}
+                  <strong>Surface:</strong> {race.track_surface}
+                </p>
+                <p>
+                  <strong>Length:</strong> {race.track_length}m
+                </p>
+                <p>
+                  <strong>Winner:</strong> {race.winner || "N/A"}
+                </p>
+                <p>
+                  <strong>Participants:</strong> {race.total_participants}
+                </p>
               </div>
-            </div>
+            </Link>
+
+            {/* Actions outside link */}
+            {user && (
+              <div className="card-actions">
+                <button onClick={() => setEditingRace(race)}>Edit</button>
+                <button onClick={() => setConfirmDelete(race)}>Delete</button>
+              </div>
+            )}
           </div>
         ))}
       </div>
+
 
       {/* Pagination */}
       <div className="pagination">

@@ -132,56 +132,56 @@ function Participations() {
           <div className="racehorse-grid">
             {groupedByRace[raceKey].map((p) => (
               <div key={p.id} className="racehorse-card">
-                <img
-                  src={p.racehorse_image || defaultHorse}
-                  alt={p.racehorse_name}
-                  className="racehorse-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = defaultHorse;
-                  }}
-                />
-                <div className="racehorse-info">
-                  <h3>
-                    {p.racehorse_name}{" "}
-                    {p.is_winner && <span style={{ color: "gold" }}>🏆</span>}
-                  </h3>
-                  <p>
-                    <strong>Jockey:</strong> {p.jockey_name}
-                  </p>
-                  <p>
-                    <strong>Position:</strong> {p.position} — {p.result_status}
-                  </p>
-                  {p.finish_time && (
+                <Link
+                  to={`/participations/${p.id}`}
+                  className="card-link"
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  <img
+                    src={p.racehorse_image || defaultHorse}
+                    alt={p.racehorse_name}
+                    className="racehorse-image"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = defaultHorse;
+                    }}
+                  />
+                  <div className="racehorse-info">
+                    <h3>
+                      {p.racehorse_name}{" "}
+                      {p.is_winner && <span style={{ color: "gold" }}>🏆</span>}
+                    </h3>
                     <p>
-                      <strong>Time:</strong> {p.finish_time}
+                      <strong>Jockey:</strong> {p.jockey_name}
                     </p>
-                  )}
-                  {p.margin && (
                     <p>
-                      <strong>Margin:</strong> {p.margin} lengths
+                      <strong>Position:</strong> {p.position} — {p.result_status}
                     </p>
-                  )}
-                  {p.odds && (
-                    <p>
-                      <strong>Odds:</strong> {p.odds}
-                    </p>
-                  )}
-
-                  <div className="card-actions">
-                    <Link to={`/participations/${p.id}`}>
-                      <button>View</button>
-                    </Link>
-                    {user && (
-                      <>
-                        <button onClick={() => setEditingParticipation(p)}>
-                          Edit
-                        </button>
-                        <button onClick={() => setConfirmDelete(p)}>Delete</button>
-                      </>
+                    {p.finish_time && (
+                      <p>
+                        <strong>Time:</strong> {p.finish_time}
+                      </p>
+                    )}
+                    {p.margin && (
+                      <p>
+                        <strong>Margin:</strong> {p.margin} lengths
+                      </p>
+                    )}
+                    {p.odds && (
+                      <p>
+                        <strong>Odds:</strong> {p.odds}
+                      </p>
                     )}
                   </div>
-                </div>
+                </Link>
+
+                {/* Actions outside clickable area */}
+                {user && (
+                  <div className="card-actions">
+                    <button onClick={() => setEditingParticipation(p)}>Edit</button>
+                    <button onClick={() => setConfirmDelete(p)}>Delete</button>
+                  </div>
+                )}
               </div>
             ))}
           </div>

@@ -105,32 +105,36 @@ function Jockeys() {
       <div className="racehorse-grid">
         {items.map((jockey) => (
           <div key={jockey.id} className="racehorse-card">
-            <img
-              src={jockey.image || defaultJockey}
-              alt={jockey.name}
-              className="racehorse-image"
-            />
-            <div className="racehorse-info">
-              <h3>{jockey.name}</h3>
-              <p><strong>Races:</strong> {jockey.total_races}</p>
-              <p><strong>Wins:</strong> {jockey.total_wins}</p>
-              <p><strong>Win Rate:</strong> {jockey.win_rate}%</p>
-
-              <div className="card-actions">
-                <Link to={`/jockeys/${jockey.id}`}>
-                  <button>View</button>
-                </Link>
-                {user && (
-                  <>
-                    <button onClick={() => setEditingJockey(jockey)}>Edit</button>
-                    <button onClick={() => setConfirmDelete(jockey)}>Delete</button>
-                  </>
-                )}
+            {/* Wrap clickable part in Link */}
+            <Link
+              to={`/jockeys/${jockey.id}`}
+              className="card-link"
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <img
+                src={jockey.image || defaultJockey}
+                alt={jockey.name}
+                className="racehorse-image"
+              />
+              <div className="racehorse-info">
+                <h3>{jockey.name}</h3>
+                <p><strong>Races:</strong> {jockey.total_races}</p>
+                <p><strong>Wins:</strong> {jockey.total_wins}</p>
+                <p><strong>Win Rate:</strong> {jockey.win_rate}%</p>
               </div>
-            </div>
+            </Link>
+
+            {/* Keep actions separate */}
+            {user && (
+              <div className="card-actions">
+                <button onClick={() => setEditingJockey(jockey)}>Edit</button>
+                <button onClick={() => setConfirmDelete(jockey)}>Delete</button>
+              </div>
+            )}
           </div>
         ))}
       </div>
+
 
       {/* Pagination */}
       <div className="pagination">

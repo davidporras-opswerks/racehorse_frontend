@@ -23,10 +23,10 @@ function Navbar() {
         <Link className="navbar-brand" to="/">
           <img
             src={theme === "dark" ? horseshoeDark : horseshoeLight}
-            alt="Uma Records"
+            alt="Horse Records"
             className="navbar-logo"
           />
-          Uma Records
+          Horse Records
         </Link>
       </div>
       <div className="navbar-right">
