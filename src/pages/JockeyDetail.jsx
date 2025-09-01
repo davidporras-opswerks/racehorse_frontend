@@ -128,9 +128,9 @@ function JockeyDetail() {
         </div>
 
         <div className="jockey-actions">
-          <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
-          {user && <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>}
-          {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>}
+          <button className="btn back" onClick={() => navigate(-1)}>Back</button>
+          {user && <button className="btn edit" onClick={() => setShowEdit(true)}>Edit</button>}
+          {user && <button className="btn delete" onClick={() => setConfirmDelete(true)}>Delete</button>}
           {user && (
             <button
               className="btn add"

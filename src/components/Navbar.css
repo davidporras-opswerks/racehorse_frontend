@@ -2,13 +2,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(90deg, #895b50, #dadcd2); /* racing blue gradient */
+  background: linear-gradient(90deg, rgba(137, 91, 80, 0.9), rgba(218, 220, 210, 0.9));
   padding: 12px 24px;
   color: var(--text);
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
+  backdrop-filter: blur(6px); /* optional: adds frosted glass effect */
 }
 
 .navbar-left {
@@ -69,7 +70,12 @@
 
 /* Dark theme override */
 body.dark .navbar {
-  background: linear-gradient(90deg, #081531, #002e46); /* darker gradient */
+  background: linear-gradient(
+    90deg,
+    rgba(8, 21, 49, 0.9),
+    rgba(0, 46, 70, 0.9)
+  ); /* translucent dark gradient */
+  backdrop-filter: blur(6px); /* frosted glass effect */
 }
 
 body.dark .navbar-brand,

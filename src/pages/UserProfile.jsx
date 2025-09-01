@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import EditUserModal from "../components/EditUserModal";
@@ -13,14 +13,18 @@ function UserProfile() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchProfile = useCallback(() => {
     fetchWithAuth(`/users/${id}/`)
       .then((data) => setProfile(data))
       .catch((err) => {
         console.error(err);
         alert("Failed to fetch user profile");
       });
-  }, [fetchWithAuth, id]);
+  }, [fetchWithAuth, id])
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   const handleDelete = () => {
     fetchWithAuth(`/users/${id}/`, { method: "DELETE" })
@@ -51,12 +55,12 @@ function UserProfile() {
           </div>
 
           <div className="user-profile-actions">
-            <button className="btn back" onClick={() => navigate(-1)}>⬅ Back</button>
+            <button className="btn back" onClick={() => navigate(-1)}>Back</button>
             {(user && (user.is_admin || Number(user.user_id) === profile.id)) && (
-              <button className="btn edit" onClick={() => setShowEdit(true)}>✏️ Edit</button>
+              <button className="btn edit" onClick={() => setShowEdit(true)}>Edit</button>
             )}
             {(user && user.is_admin) && (
-              <button className="btn delete" onClick={() => setConfirmDelete(true)}>🗑️ Delete</button>
+              <button className="btn delete" onClick={() => setConfirmDelete(true)}>Delete</button>
             )}
           </div>
         </div>
@@ -67,7 +71,7 @@ function UserProfile() {
           editUser={profile}
           onClose={() => setShowEdit(false)}
           onSuccess={(updated) => {
-            setProfile(updated);
+            fetchProfile();
             setShowEdit(false);
           }}
         />
