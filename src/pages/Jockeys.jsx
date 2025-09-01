@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import AddJockeyModal from "../components/AddJockeyModal";
 import EditJockeyModal from "../components/EditJockeyModal";
 import ConfirmModal from "../components/ConfirmModal";
+import JockeyOrderModal from "../components/JockeyOrderModal";
 import "./Racehorses.css"; // reuse same styling
 import defaultJockey from "../assets/default-jockey.webp";
 
@@ -13,6 +14,8 @@ function Jockeys() {
   const [showModal, setShowModal] = useState(false);
   const [editingJockey, setEditingJockey] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [ordering, setOrdering] = useState("");
 
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
@@ -30,6 +33,10 @@ function Jockeys() {
         params.append("search", search);
       }
 
+      if (ordering) {
+        params.append("ordering", ordering);
+      }
+
       fetchWithAuth(`/jockeys/?${params.toString()}`)
         .then((data) => {
           setItems(data.results || []);
@@ -43,7 +50,7 @@ function Jockeys() {
           logout();
         });
     },
-    [search, fetchWithAuth, logout]
+    [search, ordering, fetchWithAuth, logout]
   );
 
   useEffect(() => {
@@ -81,6 +88,7 @@ function Jockeys() {
           onChange={(e) => setSearch(e.target.value)}
         />
         <button onClick={() => fetchPage(1)}>Search</button>
+        <button onClick={() => setShowOrderModal(true)}>⇅ Sort</button>
       </div>
 
       {/* Add button */}
@@ -162,6 +170,17 @@ function Jockeys() {
           message={`Are you sure you want to delete "${confirmDelete.name}"?`}
           onConfirm={() => handleDelete(confirmDelete.id)}
           onCancel={() => setConfirmDelete(null)}
+        />
+      )}
+      {showOrderModal && (
+        <JockeyOrderModal
+          ordering={ordering}
+          onChange={setOrdering}
+          onApply={() => {
+            fetchPage(1); // reset to first page
+            setShowOrderModal(false);
+          }}
+          onClose={() => setShowOrderModal(false)}
         />
       )}
     </div>

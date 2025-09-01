@@ -5,6 +5,7 @@ import AddRaceModal from "../components/AddRaceModal";
 import EditRaceModal from "../components/EditRaceModal";
 import ConfirmModal from "../components/ConfirmModal";
 import RaceFilterModal from "../components/RaceFilterModal";
+import RaceOrderModal from "../components/RaceOrderModal";
 import "./Racehorses.css"; // reuse same styling
 
 function Races() {
@@ -14,6 +15,8 @@ function Races() {
   const [editingRace, setEditingRace] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [ordering, setOrdering] = useState("");
 
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
@@ -60,6 +63,11 @@ function Races() {
         params.append("search", search);
       }
 
+      // Ordering
+      if (ordering) {
+        params.append("ordering", ordering);
+      }
+
       fetchWithAuth(`/races/?${params.toString()}`)
         .then((data) => {
           setItems(data.results || []);
@@ -73,7 +81,7 @@ function Races() {
           logout();
         });
     },
-    [filters, search, fetchWithAuth, logout]
+    [filters, search, ordering, fetchWithAuth, logout]
   );
 
   useEffect(() => {
@@ -112,6 +120,7 @@ function Races() {
         />
         <button onClick={() => fetchPage(1)}>Search</button>
         <button onClick={() => setShowFilterModal(true)}>⚙️ Filters</button>
+        <button onClick={() => setShowOrderModal(true)}>⇅ Sort</button>
       </div>
 
       {/* Add race */}
@@ -211,6 +220,17 @@ function Races() {
             setShowFilterModal(false);
           }}
           onClose={() => setShowFilterModal(false)}
+        />
+      )}
+      {showOrderModal && (
+        <RaceOrderModal
+          ordering={ordering}
+          onChange={setOrdering}
+          onApply={() => {
+            fetchPage(1); // reset to first page
+            setShowOrderModal(false);
+          }}
+          onClose={() => setShowOrderModal(false)}
         />
       )}
     </div>
