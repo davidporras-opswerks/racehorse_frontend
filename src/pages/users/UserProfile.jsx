@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import EditUserModal from "../components/EditUserModal";
-import ConfirmModal from "../components/ConfirmModal";
-import "./UserProfile.css";
+import { useAuth } from "../../context/AuthContext";
+import EditUserModal from "../../components/EditUserModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import "../styles/UserProfile.css";
 
 function UserProfile() {
   const { id } = useParams();

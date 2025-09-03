@@ -1,11 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import EditRaceModal from "../components/EditRaceModal";
-import ConfirmModal from "../components/ConfirmModal";
-import AddParticipationModal from "../components/AddParticipationModal";
-import "../styles/DetailCommon.css";
-import "./RaceDetail.css"
+import { useAuth } from "../../context/AuthContext";
+import EditRaceModal from "../../components/EditRaceModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import AddParticipationModal from "../../components/AddParticipationModal";
+import "../../styles/DetailCommon.css";
+import "../styles/RaceDetail.css"
 
 function RaceDetail() {
   const { id } = useParams();

@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import AddParticipationModal from "../components/AddParticipationModal";
-import EditParticipationModal from "../components/EditParticipationModal";
-import ConfirmModal from "../components/ConfirmModal";
-import ParticipationFilterModal from "../components/ParticipationFilterModal";
-import "./Racehorses.css";
-import defaultHorse from "../assets/default-horse.webp";
+import AddParticipationModal from "../../components/AddParticipationModal";
+import EditParticipationModal from "../../components/EditParticipationModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import ParticipationFilterModal from "../../components/ParticipationFilterModal";
+import "../styles/Racehorses.css";
+import defaultHorse from "../../assets/default-horse.webp";
 
 function Participations() {
   const { fetchWithAuth, logout, user } = useAuth();

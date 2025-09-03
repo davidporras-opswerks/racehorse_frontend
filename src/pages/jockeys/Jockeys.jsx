@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import AddJockeyModal from "../components/AddJockeyModal";
-import EditJockeyModal from "../components/EditJockeyModal";
-import ConfirmModal from "../components/ConfirmModal";
-import JockeyOrderModal from "../components/JockeyOrderModal";
-import "./Racehorses.css"; // reuse same styling
-import defaultJockey from "../assets/default-jockey.webp";
+import AddJockeyModal from "../../components/AddJockeyModal";
+import EditJockeyModal from "../../components/EditJockeyModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import JockeyOrderModal from "../../components/JockeyOrderModal";
+import "../styles/Racehorses.css"; // reuse same styling
+import defaultJockey from "../../assets/default-jockey.webp";
 
 function Jockeys() {
   const { fetchWithAuth, logout, user } = useAuth();

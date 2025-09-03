@@ -1,18 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import Navbar from "./components/Navbar";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Racehorses from "./pages/Racehorses";
-import RacehorseDetail from "./pages/RacehorseDetail";
-import Jockeys from "./pages/Jockeys";
-import Races from "./pages/Races";
-import Participations from "./pages/Participations";
-import JockeyDetail from "./pages/JockeyDetail";
-import RaceDetail from "./pages/RaceDetail";
-import ParticipationDetail from "./pages/ParticipationDetail";
-import UserProfile from "./pages/UserProfile";
-import Users from "./pages/Users";
+import Login from "./pages/users/Login";
+import Register from "./pages/users/Register";
+import Racehorses from "./pages/racehorses/Racehorses";
+import RacehorseDetail from "./pages/racehorses/RacehorseDetail";
+import Jockeys from "./pages/jockeys/Jockeys";
+import Races from "./pages/races/Races";
+import Participations from "./pages/participations/Participations";
+import JockeyDetail from "./pages/jockeys/JockeyDetail";
+import RaceDetail from "./pages/races/RaceDetail";
+import ParticipationDetail from "./pages/participations/ParticipationDetail";
+import UserProfile from "./pages/users/UserProfile";
+import Users from "./pages/users/Users";
 
 function App() {
   const { user } = useAuth();

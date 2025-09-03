@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import EditParticipationModal from "../components/EditParticipationModal";
-import ConfirmModal from "../components/ConfirmModal";
-import "./ParticipationDetail.css"
-import defaultHorse from "../assets/default-horse.webp";
+import { useAuth } from "../../context/AuthContext";
+import EditParticipationModal from "../../components/EditParticipationModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import "../styles/ParticipationDetail.css"
+import defaultHorse from "../../assets/default-horse.webp";
 
 function ParticipationDetail() {
   const { id } = useParams();

@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import EditJockeyModal from "../components/EditJockeyModal";
-import ConfirmModal from "../components/ConfirmModal";
-import AddParticipationModal from "../components/AddParticipationModal";
-import "./JockeyDetail.css";
-import defaultJockey from "../assets/default-jockey.webp";
-import "../styles/DetailCommon.css";
+import { useAuth } from "../../context/AuthContext";
+import EditJockeyModal from "../../components/EditJockeyModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import AddParticipationModal from "../../components/AddParticipationModal";
+import "../styles/JockeyDetail.css";
+import defaultJockey from "../../assets/default-jockey.webp";
+import "../../styles/DetailCommon.css";
 
 function JockeyDetail() {
   const { id } = useParams();

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import "./Register.css";
+import { useAuth } from "../../context/AuthContext";
+import "../styles/Register.css";
 
 function Register() {
   const { user } = useAuth();

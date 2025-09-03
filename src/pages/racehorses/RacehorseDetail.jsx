@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import EditRacehorseModal from "../components/EditRacehorseModal";
-import ConfirmModal from "../components/ConfirmModal";
-import AddParticipationModal from "../components/AddParticipationModal";
-import "./RacehorseDetail.css";
-import defaultHorse from "../assets/default-horse.webp";
-import "../styles/DetailCommon.css";
+import { useAuth } from "../../context/AuthContext";
+import EditRacehorseModal from "../../components/EditRacehorseModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import AddParticipationModal from "../../components/AddParticipationModal";
+import "../styles/RacehorseDetail.css";
+import defaultHorse from "../../assets/default-horse.webp";
+import "../../styles/DetailCommon.css";
 
 function RacehorseDetail() {
   const { id } = useParams();

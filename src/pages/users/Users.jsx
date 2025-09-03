@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import ConfirmModal from "../components/ConfirmModal";
-import EditUserModal from "../components/EditUserModal";
-import defaultAvatar from "../assets/default-avatar.webp"; // fallback avatar
-import "./Users.css"; // new stylesheet
+import ConfirmModal from "../../components/ConfirmModal";
+import EditUserModal from "../../components/EditUserModal";
+import defaultAvatar from "../../assets/default-avatar.webp"; // fallback avatar
+import "../styles/Users.css"; // new stylesheet
 
 function Users() {
   const { fetchWithAuth, logout, user } = useAuth();

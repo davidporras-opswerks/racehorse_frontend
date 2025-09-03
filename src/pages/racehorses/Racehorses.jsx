@@ -1,18 +1,19 @@
 import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import AddRaceModal from "../components/AddRaceModal";
-import EditRaceModal from "../components/EditRaceModal";
-import ConfirmModal from "../components/ConfirmModal";
-import RaceFilterModal from "../components/RaceFilterModal";
-import RaceOrderModal from "../components/RaceOrderModal";
-import "./Racehorses.css"; // reuse same styling
+import AddRacehorseModal from "../../components/AddRacehorseModal";
+import EditRacehorseModal from "../../components/EditRacehorseModal";
+import ConfirmModal from "../../components/ConfirmModal";
+import FilterModal from "../../components/FilterModal";
+import OrderModal from "../../components/OrderModal";
+import "../styles/Racehorses.css";
+import defaultHorse from "../../assets/default-horse.webp";
 
-function Races() {
+function Racehorses() {
   const { fetchWithAuth, logout, user } = useAuth();
   const [items, setItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [editingRace, setEditingRace] = useState(null);
+  const [editingHorse, setEditingHorse] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -25,40 +26,28 @@ function Races() {
   const pageSize = 10;
 
   const [filters, setFilters] = useState({
-    location: "",
-    track_surface: "",
-    classification: "",
-    season: "",
-    date_after: "",
-    date_before: "",
+    breed: "",
+    country: "",
+    is_active: "",
   });
-
   const [search, setSearch] = useState("");
 
   const fetchPage = useCallback(
     (pageNum = 1) => {
       const params = new URLSearchParams({ page: pageNum });
 
-      // Filters
+      // Add filters
       Object.entries(filters).forEach(([key, value]) => {
         if (value !== "") {
-          switch (key) {
-            case "date_after":
-              params.append("date__gt", value);
-              break;
-            case "date_before":
-              params.append("date__lt", value);
-              break;
-            default:
-              if (["location"].includes(key)) {
-                params.append(`${key}__icontains`, value);
-              } else {
-                params.append(key, value);
-              }
+          if (key === "is_active") {
+            params.append(key, value);
+          } else {
+            params.append(`${key}__icontains`, value);
           }
         }
       });
 
+      // Search
       if (search.trim() !== "") {
         params.append("search", search);
       }
@@ -68,7 +57,7 @@ function Races() {
         params.append("ordering", ordering);
       }
 
-      fetchWithAuth(`/races/?${params.toString()}`)
+      fetchWithAuth(`/racehorses/?${params.toString()}`)
         .then((data) => {
           setItems(data.results || []);
           setCount(data.count || 0);
@@ -88,33 +77,33 @@ function Races() {
     fetchPage(1);
   }, [fetchPage]);
 
-  const handleDelete = async (raceId) => {
+  const handleDelete = async (horseId) => {
     try {
-      await fetchWithAuth(`/races/${raceId}/`, { method: "DELETE" });
+      await fetchWithAuth(`/racehorses/${horseId}/`, { method: "DELETE" });
       setConfirmDelete(null);
 
-      // Check if current page will be empty after deletion
-      const remainingItems = items.filter((r) => r.id !== raceId);
+      // After deletion, check if the current page will be empty
+      const remainingItems = items.filter((h) => h.id !== horseId);
       if (remainingItems.length === 0 && page > 1) {
         fetchPage(page - 1); // go to previous page
       } else {
         fetchPage(page); // stay on current page
       }
     } catch (err) {
-      console.error("Failed to delete race:", err);
+      console.error("Failed to delete racehorse:", err);
       alert("Delete failed");
     }
   };
 
+
   return (
     <div className="racehorses-page">
-      <h1 className="page-title">Races</h1>
+      <h1 className="page-title">Racehorses</h1>
 
-      {/* Search + Filter */}
       <div className="filter-search-container">
         <input
           type="text"
-          placeholder="Search by race name..."
+          placeholder="Search by name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -123,61 +112,50 @@ function Races() {
         <button onClick={() => setShowOrderModal(true)}>⇅ Sort</button>
       </div>
 
-      {/* Add race */}
+
       {user && (
         <button className="add-button" onClick={() => setShowModal(true)}>
-          Add Race
+          Add Racehorse
         </button>
       )}
 
-      {/* Grid of race cards */}
       <div className="racehorse-grid">
-        {items.map((race) => (
-          <div key={race.id} className="racehorse-card">
-            {/* Clickable area */}
+        {items.map((horse) => (
+          <div
+            key={horse.id}
+            className="racehorse-card"
+          >
+            {/* Wrap clickable part in Link */}
             <Link
-              to={`/races/${race.id}`}
+              to={`/racehorses/${horse.id}`}
               className="card-link"
               style={{ textDecoration: "none", color: "inherit" }}
             >
+              <img
+                src={horse.image || defaultHorse}
+                alt={horse.name}
+                className="racehorse-image"
+              />
               <div className="racehorse-info">
-                <h3>{race.name}</h3>
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(race.date).toLocaleDateString()}
-                </p>
-                <p>
-                  <strong>Location:</strong> {race.location}
-                </p>
-                <p>
-                  <strong>Classification:</strong> {race.classification} |{" "}
-                  <strong>Surface:</strong> {race.track_surface}
-                </p>
-                <p>
-                  <strong>Length:</strong> {race.track_length}m
-                </p>
-                <p>
-                  <strong>Winner:</strong> {race.winner || "N/A"}
-                </p>
-                <p>
-                  <strong>Participants:</strong> {race.total_participants}
-                </p>
+                <h3>{horse.name}</h3>
+                <p><strong>Breed:</strong> {horse.breed || "Unknown"}</p>
+                <p><strong>Country:</strong> {horse.country || "Unknown"}</p>
+                <p><strong>Wins:</strong> {horse.total_wins} / {horse.total_races}</p>
+                <p><strong>Win Rate:</strong> {horse.win_rate}%</p>
               </div>
             </Link>
 
-            {/* Actions outside link */}
+            {/* Keep actions separate so they don’t trigger the link */}
             {user && (
               <div className="card-actions">
-                <button onClick={() => setEditingRace(race)}>Edit</button>
-                <button onClick={() => setConfirmDelete(race)}>Delete</button>
+                <button onClick={() => setEditingHorse(horse)}>Edit</button>
+                <button onClick={() => setConfirmDelete(horse)}>Delete</button>
               </div>
             )}
           </div>
         ))}
       </div>
 
-
-      {/* Pagination */}
       <div className="pagination">
         <button disabled={!previous} onClick={() => fetchPage(page - 1)}>
           Previous
@@ -192,18 +170,18 @@ function Races() {
 
       {/* Modals */}
       {showModal && (
-        <AddRaceModal
+        <AddRacehorseModal
           onClose={() => setShowModal(false)}
           onSuccess={() => fetchPage(page)}
         />
       )}
-      {editingRace && (
-        <EditRaceModal
-          race={editingRace}
-          onClose={() => setEditingRace(null)}
+      {editingHorse && (
+        <EditRacehorseModal
+          horse={editingHorse}
+          onClose={() => setEditingHorse(null)}
           onSuccess={(updated) => {
-            setItems(items.map((r) => (r.id === updated.id ? updated : r)));
-            setEditingRace(null);
+            setItems(items.map((h) => (h.id === updated.id ? updated : h)));
+            setEditingHorse(null);
             fetchPage(page);
           }}
         />
@@ -216,7 +194,7 @@ function Races() {
         />
       )}
       {showFilterModal && (
-        <RaceFilterModal
+        <FilterModal
           filters={filters}
           onChange={setFilters}
           onApply={() => {
@@ -227,7 +205,7 @@ function Races() {
         />
       )}
       {showOrderModal && (
-        <RaceOrderModal
+        <OrderModal
           ordering={ordering}
           onChange={setOrdering}
           onApply={() => {
@@ -237,8 +215,9 @@ function Races() {
           onClose={() => setShowOrderModal(false)}
         />
       )}
+
     </div>
   );
 }
 
-export default Races;
+export default Racehorses;

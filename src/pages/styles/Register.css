@@ -7,7 +7,7 @@
   align-items: center;
   min-height: 91.92vh;
   height: 93.1vh; /* ensure full viewport height */
-  background: url('../assets/background-light.png') no-repeat center center fixed; /* default light */
+  background: url('../../assets/background-light.png') no-repeat center center fixed; /* default light */
   background-size: cover;
   padding: 2rem;
   box-sizing: border-box;
@@ -17,7 +17,7 @@
 
 /* Dark mode background */
 body.dark .register-page {
-  background-image: url('../assets/background-dark.jpg'); /* dark mode image */
+  background-image: url('../../assets/background-dark.jpg'); /* dark mode image */
 }
 
 .form-container {
